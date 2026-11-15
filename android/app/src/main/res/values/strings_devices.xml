@@ -1,0 +1,18 @@
+<resources>
+    <string name="devices_connect_manual">Conectar IP:Puerto</string>
+    <string name="devices_lan_section">DESCUBIERTOS EN LAN (SIN VINCULAR)</string>
+    <string name="devices_pair_pin">+ Vincular por PIN</string>
+    <string name="devices_request_connection">Solicitar conexión</string>
+    <string name="devices_trusted_section">EQUIPOS VINCULADOS (%1$d)</string>
+    <string name="devices_policy_auto">AutoAccept</string>
+    <string name="devices_policy_ask">Confirmar antes</string>
+    <string name="devices_trusted_empty">No hay equipos vinculados aún.</string>
+    <string name="devices_policy_label">Política: %1$s</string>
+    <string name="devices_toggle_policy">Cambiar política</string>
+    <string name="devices_pairing_title">Emparejamiento Zero-Trust</string>
+    <string name="devices_pairing_subtitle">Digita este PIN en el equipo remoto antes de que expire:</string>
+    <string name="devices_pairing_expiry">Expira en 60s · Máx. 3 intentos</string>
+    <string name="devices_pair_with">Vincular con %1$s</string>
+    <string name="devices_pin_label">PIN de 6 dígitos</string>
+    <string name="devices_verify_and_pair">Verificar y Vincular</string>
+</resources>

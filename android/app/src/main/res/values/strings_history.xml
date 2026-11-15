@@ -1,0 +1,6 @@
+<resources>
+    <string name="history_empty">Sin transferencias registradas en esta sesión.</string>
+    <string name="history_filter_all">Todos</string>
+    <string name="history_filter_sent">Enviados</string>
+    <string name="history_filter_received">Recibidos</string>
+</resources>

@@ -1,0 +1,372 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CrossRelay.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="700"
+             x:Class="CrossRelay.Desktop.Views.TrustedPeersView"
+             x:DataType="vm:TrustedPeersViewModel">
+
+    <Grid>
+        <Grid RowDefinitions="Auto,*" RowSpacing="16" Margin="24,10,24,14">
+            
+            <!-- Encabezado de la Pantalla Dispositivos -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                <StackPanel Grid.Column="0" Spacing="2">
+                    <TextBlock Text="Dispositivos y Vínculos Confiables" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" />
+                    <TextBlock Text="Gestión de confianza mutua (PIN de 6 dígitos), carpetas dedicadas y telemetría de red"
+                               FontSize="12" Foreground="#A1A1AA" />
+                </StackPanel>
+
+                <!-- Botón Vincular Nuevo Equipo (Electric Indigo #582BF5 -> #7C3BFC) -->
+                <Button Grid.Column="1" Command="{Binding OpenPairNewDeviceModalCommand}"
+                        CornerRadius="12" Padding="15,8" BorderThickness="0" VerticalAlignment="Center">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                            <GradientStop Offset="0.0" Color="#582BF5" />
+                            <GradientStop Offset="1.0" Color="#7C3BFC" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="stroke-icon" Data="{StaticResource IconPlus}" Stroke="#FFFFFF" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock Text="Vincular nuevo equipo" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Diseño Maestro-Detalle Full-Height (2 Columnas: Lista de Equipos a la Izquierda y Ficha a la Derecha) -->
+            <Grid Grid.Row="1" ColumnDefinitions="230,*" ColumnSpacing="16">
+                
+                <!-- Columna Izquierda: Lista Dinámica de Equipos Emparejados (Superficie Obsidian #0E0F12) -->
+                <Border Grid.Column="0" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="16" VerticalAlignment="Stretch">
+                    <Grid RowDefinitions="Auto,*" RowSpacing="14">
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="Equipos Vinculados" FontWeight="SemiBold" FontSize="13.5" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                            <Border Grid.Column="1" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" CornerRadius="10" Padding="9,2">
+                                <TextBlock Text="{Binding TrustedPeersCount}" FontSize="11.5" Foreground="#C185FC" FontWeight="SemiBold" FontFamily="Consolas, monospace" />
+                            </Border>
+                        </Grid>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Spacing="10">
+                                <!-- Estado Vacío si aún no hay equipos vinculados -->
+                                <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="14,18"
+                                        IsVisible="{Binding !HasTrustedPeers}">
+                                    <StackPanel HorizontalAlignment="Center" Spacing="6">
+                                        <TextBlock Text="Sin equipos vinculados" FontWeight="SemiBold" FontSize="11.5" Foreground="#D4D4D8" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Pulsa '+ Vincular nuevo equipo' arriba a la derecha para emparejar con PIN."
+                                                   FontSize="10.5" Foreground="#71717A" TextWrapping="Wrap" TextAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Lista de Peers Reales -->
+                                <ItemsControl ItemsSource="{Binding TrustedPeers}" IsVisible="{Binding HasTrustedPeers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Spacing="8" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:TrustedPeerItemViewModel">
+                                            <Button Command="{Binding $parent[UserControl].((vm:TrustedPeersViewModel)DataContext).SelectTrustedPeerCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                                <Border Background="#131316" BorderBrush="{Binding CardBorderColor}" BorderThickness="1" CornerRadius="12" Padding="11">
+                                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="11" VerticalAlignment="Center">
+                                                        <Border Grid.Column="0" Width="34" Height="34" CornerRadius="8" Background="{Binding TileBg}" BorderBrush="{Binding TileBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                                            <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                <Canvas Width="24" Height="24">
+                                                                    <Path Data="{StaticResource IconWindows}" Fill="{Binding IconColor}" IsVisible="{Binding IsWindows}" />
+                                                                    <Path Data="{StaticResource IconLinux}" Fill="{Binding IconColor}" IsVisible="{Binding IsLinux}" />
+                                                                    <Path Classes="stroke-icon" Data="{StaticResource IconPhone}" Stroke="{Binding IconColor}" IsVisible="{Binding IsAndroid}" />
+                                                                </Canvas>
+                                                            </Viewbox>
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                                            <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock Text="{Binding PolicyText}" FontSize="10.5" Foreground="{Binding PolicyColor}" />
+                                                        </StackPanel>
+                                                        <Ellipse Grid.Column="2" Width="8" Height="8" Fill="{Binding DotColor}" VerticalAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Columna Derecha: Ficha de Configuración del Nodo Seleccionado (Superficie Obsidian #0E0F12) -->
+                <Border Grid.Column="1" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20" VerticalAlignment="Stretch">
+                    <Grid>
+                        <!-- Vista cuando NO hay ningún dispositivo vinculado seleccionado -->
+                        <StackPanel IsVisible="{Binding !HasSelectedPeer}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,48">
+                            <Border Width="54" Height="54" CornerRadius="14" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" HorizontalAlignment="Center">
+                                <Viewbox Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconDevices}" Stroke="#C185FC" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Border>
+                            <TextBlock Text="Ningún dispositivo vinculado seleccionado" FontWeight="Bold" FontSize="15" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                            <TextBlock Text="CrossRelay opera bajo arquitectura Zero-Trust: debes vincular previamente cualquier dispositivo con un PIN de 6 dígitos para habilitar el envío y recepción de archivos."
+                                       FontSize="11.5" Foreground="#A1A1AA" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="420" />
+                            <Button Command="{Binding OpenPairNewDeviceModalCommand}" Classes="btn-primary" HorizontalAlignment="Center" Margin="0,6,0,0">
+                                <TextBlock Text="+ Vincular nuevo equipo ahora" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" />
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Ficha de Detalle cuando hay un dispositivo vinculado seleccionado -->
+                        <Grid RowDefinitions="Auto,*" RowSpacing="16" IsVisible="{Binding HasSelectedPeer}">
+                            
+                            <!-- Cabecera de la Ficha: Avatar + Título + Badge + Enviar + Desvincular + Bloquear + Guardar Cambios -->
+                            <Border Grid.Row="0" BorderBrush="#181B22" BorderThickness="0,0,0,1" Padding="0,0,0,12">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SelectedPeerInitials}" FontWeight="Bold" FontSize="14" Foreground="#C185FC" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{Binding SelectedPeerHeaderTitle}" FontWeight="Bold" FontSize="15.5" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding SelectedPeerFingerprintText}" FontSize="11.5" Foreground="#A1A1AA" FontFamily="Consolas, monospace" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <Border Background="{Binding SelectedPeerOnlineBadgeBg}" BorderBrush="{Binding SelectedPeerOnlineBadgeBorder}" BorderThickness="1" CornerRadius="8" Padding="9,5" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding SelectedPeerOnlineBadgeText}" FontSize="11" Foreground="{Binding SelectedPeerOnlineBadgeFg}" FontWeight="Medium" VerticalAlignment="Center" />
+                                        </Border>
+                                        <Button Command="{Binding QuickSendToSelectedPeerCommand}"
+                                                Background="#1E1738" BorderBrush="#332763" BorderThickness="1" CornerRadius="10" Padding="10,6" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                                <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Classes="stroke-icon" Data="{StaticResource IconSend}" Stroke="#C185FC" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                                <TextBlock Text="Enviar" FontSize="11" Foreground="#C185FC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Command="{Binding DeletePeerCommand}" Classes="btn-secondary" Content="Desvincular" Padding="10,6" CornerRadius="10" FontSize="11" />
+                                        <Button Command="{Binding BlockPeerCommand}" Background="#1F1014" BorderBrush="#3F1922" BorderThickness="1" CornerRadius="10" Padding="10,6">
+                                            <TextBlock Text="Bloquear" FontSize="11" Foreground="#EF4444" FontWeight="SemiBold" />
+                                        </Button>
+                                        <Button Command="{Binding SavePeerChangesCommand}" Classes="btn-primary-fade" Padding="14,6">
+                                            <TextBlock Text="Guardar Cambios" FontSize="11" Foreground="#FFFFFF" FontWeight="Bold" />
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <StackPanel Spacing="16">
+                                    <!-- Formulario de Configuración: Alias y Carpeta Dedicada -->
+                                    <Grid ColumnDefinitions="0.88*,1.32*" ColumnSpacing="12">
+                                        <StackPanel Grid.Column="0" Spacing="6">
+                                            <TextBlock Text="Alias Personalizado en Red" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                                            <TextBox Text="{Binding EditedAlias}" FontWeight="Medium" FontSize="11.5" Padding="10,7" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="6">
+                                            <TextBlock Text="Carpeta de Descarga Dedicada" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                <TextBox Grid.Column="0" Text="{Binding DedicatedDownloadFolder}" FontFamily="Consolas, monospace" FontSize="10.5" Foreground="#D4D4D8" Padding="8,7" />
+                                                <Button Grid.Column="1" Click="OnChangeFolderClicked" Classes="btn-secondary" Content="Examinar" Padding="11,7" CornerRadius="10" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Política de Aceptación: 2 Tarjetas Seleccionables Lado a Lado -->
+                                    <StackPanel Spacing="6">
+                                        <TextBlock Text="Política de Aceptación" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                            <!-- Opción 1: Descarga Automática -->
+                                            <Button Grid.Column="0" Command="{Binding SetPolicyAutoAcceptCommand}"
+                                                    Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                                <Border Background="#131316" BorderBrush="{Binding AutoAcceptBorderColor}" BorderThickness="1" CornerRadius="12" Padding="11,10">
+                                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="9" VerticalAlignment="Center">
+                                                        <Border Grid.Column="0" Width="13" Height="13" CornerRadius="6.5" Background="{Binding AutoAcceptRadioBg}" BorderBrush="{Binding AutoAcceptRadioBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                                            <Ellipse Width="5" Height="5" Fill="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsAutoAccept}" />
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                                            <TextBlock Text="Descarga Automática" FontWeight="Bold" FontSize="11.5" Foreground="#FFFFFF" />
+                                                            <TextBlock Text="Recibir en segundo plano sin pedir clics" FontSize="9.5" Foreground="#A1A1AA" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </Button>
+
+                                            <!-- Opción 2: Confirmar Antes -->
+                                            <Button Grid.Column="1" Command="{Binding SetPolicyAskConfirmationCommand}"
+                                                    Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                                <Border Background="#131316" BorderBrush="{Binding AskConfirmBorderColor}" BorderThickness="1" CornerRadius="12" Padding="11,10">
+                                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="9" VerticalAlignment="Center">
+                                                        <Border Grid.Column="0" Width="13" Height="13" CornerRadius="6.5" Background="{Binding AskConfirmRadioBg}" BorderBrush="{Binding AskConfirmRadioBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                                            <Ellipse Width="5" Height="5" Fill="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsAskConfirmation}" />
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                                            <TextBlock Text="Confirmar Antes" FontWeight="Bold" FontSize="11.5" Foreground="#FFFFFF" />
+                                                            <TextBlock Text="Mostrar modal previo Aceptar/Rechazar" FontSize="9.5" Foreground="#A1A1AA" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- Métricas Acumuladas Reales -->
+                                    <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="16,12">
+                                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                                            <StackPanel Grid.Column="0" Spacing="2">
+                                                <TextBlock Text="DATOS TOTALES" FontSize="9.5" FontWeight="SemiBold" Foreground="#71717A" LetterSpacing="0.8" />
+                                                <TextBlock Text="{Binding FormattedTotalBytes}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="17" Foreground="#C185FC" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="2">
+                                                <TextBlock Text="ARCHIVOS" FontSize="9.5" FontWeight="SemiBold" Foreground="#71717A" LetterSpacing="0.8" />
+                                                <TextBlock Text="{Binding FormattedFilesCount}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="17" Foreground="#FFFFFF" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Spacing="2">
+                                                <TextBlock Text="VELOCIDAD MEDIA" FontSize="9.5" FontWeight="SemiBold" Foreground="#71717A" LetterSpacing="0.8" />
+                                                <TextBlock Text="{Binding FormattedAverageSpeed}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="17" Foreground="#818CF8" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="3" Spacing="2">
+                                                <TextBlock Text="LATENCIA LAN" FontSize="9.5" FontWeight="SemiBold" Foreground="#71717A" LetterSpacing="0.8" />
+                                                <TextBlock Text="{Binding FormattedLatency}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="17" Foreground="#10B981" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Estado de Guardado -->
+                                    <TextBlock Text="{Binding StatusFeedback}" FontSize="11" Foreground="#10B981" FontWeight="Medium" />
+                                </StackPanel>
+                            </ScrollViewer>
+
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- MODAL DIALOG: Vincular Nuevo Equipo (Radar mDNS de no vinculados + Desafío PIN de 6 dígitos) -->
+        <Grid Background="#CC000000" IsVisible="{Binding IsPairNewDeviceModalOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Background="#0E0F12" BorderBrush="#23222B" BorderThickness="1" CornerRadius="16"
+                    Width="510" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BoxShadow="0 10 30 0 #000000">
+                <StackPanel Spacing="18">
+                    <!-- Cabecera del Modal -->
+                    <Border BorderBrush="#181B22" BorderThickness="0,0,0,1" Padding="0,0,0,12">
+                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Vincular Nuevo Equipo (PIN Zero-Trust)" FontSize="15.5" FontWeight="Bold" Foreground="#FFFFFF" />
+                                <TextBlock Text="Selecciona un equipo detectado en tu LAN para generar un PIN de 6 dígitos" FontSize="11.5" Foreground="#A1A1AA" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Command="{Binding ClosePairNewDeviceModalCommand}"
+                                    Background="#18191E" BorderThickness="0" CornerRadius="8" Width="32" Height="32" Padding="0">
+                                <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#A1A1AA" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- PASO 1: Radar de Equipos No Vinculados en la LAN -->
+                    <StackPanel Spacing="12" IsVisible="{Binding !IsPinEntryStepVisible}">
+                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="EQUIPOS CERCANOS NO VINCULADOS" FontSize="11" FontWeight="Bold" Foreground="#A1A1AA" LetterSpacing="0.6" VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Command="{Binding RefreshRadarCommand}" Classes="btn-secondary" Padding="10,4" CornerRadius="8">
+                                <TextBlock Text="Buscar en LAN" FontSize="11" Foreground="#C185FC" FontWeight="SemiBold" />
+                            </Button>
+                        </Grid>
+
+                        <!-- Sin equipos cercanos sin vincular -->
+                        <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="20"
+                                IsVisible="{Binding !UnpairedDiscoveredPeers.Count}">
+                            <StackPanel HorizontalAlignment="Center" Spacing="6">
+                                <TextBlock Text="Buscando dispositivos CrossRelay en la red local..." FontWeight="SemiBold" FontSize="12" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                                <TextBlock Text="Asegúrate de que el otro dispositivo tenga CrossRelay abierto en la misma red Wi-Fi / LAN."
+                                           FontSize="11" Foreground="#A1A1AA" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="380" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Lista de equipos no vinculados -->
+                        <ScrollViewer MaxHeight="240" IsVisible="{Binding !!UnpairedDiscoveredPeers.Count}">
+                            <ItemsControl ItemsSource="{Binding UnpairedDiscoveredPeers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Spacing="8" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:PeerDeviceItem">
+                                        <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="12">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+                                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" VerticalAlignment="Center">
+                                                    <Viewbox Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource IconWindows}" Fill="#C185FC" IsVisible="{Binding IsWindows}" />
+                                                            <Path Data="{StaticResource IconLinux}" Fill="#C185FC" IsVisible="{Binding IsLinux}" />
+                                                            <Path Classes="stroke-icon" Data="{StaticResource IconPhone}" Stroke="#C185FC" IsVisible="{Binding IsAndroid}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" />
+                                                    <TextBlock Text="{Binding FullSubtitle}" FontSize="11" Foreground="#A1A1AA" FontFamily="Consolas, monospace" />
+                                                </StackPanel>
+                                                <Button Grid.Column="2"
+                                                        Command="{Binding $parent[UserControl].((vm:TrustedPeersViewModel)DataContext).InitiatePinPairingCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="#582BF5" BorderThickness="0" CornerRadius="8" Padding="12,6" VerticalAlignment="Center">
+                                                    <TextBlock Text="Solicitar PIN" FontSize="11.5" Foreground="#FFFFFF" FontWeight="Bold" />
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <!-- Opción de Conexión Directa por IP si el router o firewall filtra broadcast -->
+                        <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="10" Padding="12,8">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" VerticalAlignment="Center">
+                                <TextBox Grid.Column="0" Text="{Binding ManualIpAddress}"
+                                         PlaceholderText="¿No aparece? Escribe IP o IP:puerto (ej: 192.168.1.50 o 192.168.1.50:4244)..."
+                                         FontSize="11.5" Padding="10,6" />
+                                <Button Grid.Column="1" Command="{Binding ConnectByIpCommand}"
+                                        Background="#582BF5" BorderThickness="0" CornerRadius="8" Padding="14,6" VerticalAlignment="Center">
+                                    <TextBlock Text="Conectar" FontSize="11.5" Foreground="#FFFFFF" FontWeight="Bold" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- PASO 2: Digitación Activa del PIN de 6 Dígitos -->
+                    <StackPanel Spacing="14" IsVisible="{Binding IsPinEntryStepVisible}">
+                        <Border Background="#131316" BorderBrush="#332763" BorderThickness="1" CornerRadius="12" Padding="16">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding PairingTargetName, StringFormat='Vinculando con: {0}'}" FontWeight="Bold" FontSize="13.5" Foreground="#FFFFFF" />
+                                <TextBlock Text="{Binding PairingFeedback}" FontSize="11.5" Foreground="#C185FC" TextWrapping="Wrap" />
+                                <TextBox Text="{Binding EnteredPin}" MaxLength="6"
+                                         PlaceholderText="000000"
+                                         FontFamily="Consolas, monospace" FontSize="22" FontWeight="Bold"
+                                         HorizontalContentAlignment="Center" Padding="12,10" />
+                            </StackPanel>
+                        </Border>
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Button Grid.Column="0" Command="{Binding BackToRadarListCommand}" Classes="btn-secondary" Content="← Volver al radar" Padding="12,7" />
+                            <Button Grid.Column="2" Command="{Binding VerifyEnteredPinCommand}" IsEnabled="{Binding !IsPairingBusy}"
+                                    Background="#582BF5" BorderThickness="0" CornerRadius="10" Padding="16,8">
+                                <TextBlock Text="Verificar y Vincular" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" />
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

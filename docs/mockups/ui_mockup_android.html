@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CrossRelay Android — Mockup Oficial (Structa + Vaultk Polish)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-oled: #000000;
+      --surface-panel: #0E0F12;
+      --surface-container: #12141A;
+      --surface-raised: #18191E;
+      --surface-active-row: #171329;
+      --outline-subtle: #181B22;
+      --outline-interactive: #262B36;
+      --tile-bg: #1E1738;
+      --tile-border: #332763;
+      --nav-pill: #221846;
+      --accent-indigo: #582BF5;
+      --accent-violet: #7C3AED;
+      --accent-lavender: #C185FC;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #050507;
+      color: #F8FAFC;
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .panel-card {
+      background-color: var(--surface-panel);
+      border: 1px solid var(--outline-subtle);
+      border-radius: 20px;
+    }
+    .tile-surface {
+      background-color: var(--surface-container);
+      border: 1px solid var(--outline-interactive);
+      border-radius: 17px;
+    }
+    .field-surface {
+      background-color: var(--surface-raised);
+      border: 1px solid var(--outline-interactive);
+      border-radius: 14px;
+    }
+    .icon-tile {
+      background-color: var(--tile-bg);
+      border: 1px solid var(--tile-border);
+      border-radius: 14px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7C3AED 0%, #582BF5 100%);
+      box-shadow: 0 4px 16px rgba(88, 43, 245, 0.32);
+    }
+    .btn-secondary {
+      background-color: var(--surface-raised);
+      border: 1px solid #2E2B3D;
+    }
+    .btn-danger-soft {
+      background-color: #190D12;
+      border: 1px solid #3F1922;
+    }
+    .phone-frame {
+      width: 412px;
+      height: 870px;
+      background: #000000;
+      border: 3px solid #1B1E26;
+      border-radius: 44px;
+      box-shadow: 0 32px 96px rgba(0, 0, 0, 0.9), 0 0 0 1px #12141A;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #262B36; border-radius: 99px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 md:p-6 gap-4">
+
+  <!-- Barra superior fuera del teléfono para probar modales Android -->
+  <div class="flex flex-wrap items-center justify-center gap-2 text-xs">
+    <span class="px-3 py-1.5 rounded-full bg-[#0E0F12] border border-[#181B22] text-[#94A3B8] font-semibold">
+      CrossRelay Android Mockup · 412×870 (Base Structa + Vaultk)
+    </span>
+    <button onclick="openSheet('sheet-pin')" class="px-3 py-1.5 rounded-full bg-[#1E1738] hover:bg-[#2A204E] border border-[#332763] text-[#C185FC] font-semibold transition">
+      Simular PIN 6 dígitos
+    </button>
+    <button onclick="openSheet('sheet-incoming')" class="px-3 py-1.5 rounded-full bg-[#12141A] hover:bg-[#1B1E26] border border-[#262B36] text-[#F8FAFC] font-semibold transition">
+      Simular Solicitud Entrante
+    </button>
+    <button onclick="openSheet('sheet-diagnostics')" class="px-3 py-1.5 rounded-full bg-[#12141A] hover:bg-[#1B1E26] border border-[#262B36] text-emerald-400 font-semibold transition">
+      Diagnóstico Puertos
+    </button>
+  </div>
+
+  <!-- Marco Android -->
+  <div class="phone-frame relative flex flex-col overflow-hidden">
+
+    <!-- Status Bar Android -->
+    <div class="px-6 pt-3.5 pb-1.5 flex items-center justify-between text-[11px] font-mono text-[#94A3B8] bg-[#000000] shrink-0">
+      <span>22:18</span>
+      <div class="w-20 h-4 bg-[#0A0B0E] rounded-full border border-[#181B22]"></div>
+      <div class="flex items-center gap-2">
+        <span class="text-emerald-400">Wi-Fi</span>
+        <span>94%</span>
+      </div>
+    </div>
+
+    <!-- Top App Bar (StructaTopBar: limpio, OLED, sin icono CR) -->
+    <header class="px-4 pt-2 pb-3 flex items-center justify-between bg-[#000000] border-b border-[#14161D] shrink-0">
+      <div class="space-y-0.5">
+        <h1 class="text-[20px] font-bold text-[#F8FAFC] leading-tight tracking-tight">CrossRelay</h1>
+        <div class="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>TLS 1.3 :4242 · UDP :4243</span>
+        </div>
+      </div>
+      <button onclick="switchAndroidTab('ajustes', document.querySelectorAll('.nav-btn')[4])" id="topSpeedBadge" class="px-3 py-1.5 rounded-full bg-[#12141A] border border-[#262B36] text-[11px] font-mono font-semibold text-[#C185FC] hover:border-[#332763] transition">
+        Sin límite
+      </button>
+    </header>
+
+    <!-- Contenido Principal (VaultkSpacing: horizontal 16px, card gap 10px) -->
+    <main class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2.5 min-h-0">
+
+      <!-- ===================================== -->
+      <!-- TAB 1: ENVIAR                         -->
+      <!-- ===================================== -->
+      <section id="tab-enviar" class="android-tab flex flex-col gap-2.5 flex-1 min-h-0">
+
+        <!-- Tarjeta Dispositivo Destino (VaultCard + VaultkIconTile 48px) -->
+        <div class="panel-card p-3.5 flex items-center justify-between gap-3 shrink-0">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-11 h-11 icon-tile flex items-center justify-center text-[#C185FC] shrink-0">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+            </div>
+            <div class="min-w-0 space-y-0.5">
+              <div class="flex items-center gap-2">
+                <span id="selectedPeerName" class="text-[14px] font-bold text-[#F8FAFC] truncate">Edro08-Ubuntu</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-mono font-semibold text-emerald-400 shrink-0">En línea</span>
+              </div>
+              <p id="selectedPeerIp" class="text-[11px] font-mono text-[#94A3B8] truncate">LINUX · 192.168.0.14:4242</p>
+            </div>
+          </div>
+          <button onclick="openSheet('sheet-peers')" class="px-3.5 py-2 rounded-[14px] btn-secondary text-[12px] font-semibold text-[#F8FAFC] hover:bg-[#242834] transition shrink-0">
+            Cambiar
+          </button>
+        </div>
+
+        <!-- Botones de selección directa (tileRadius 17px) -->
+        <div class="grid grid-cols-2 gap-3 shrink-0">
+          <button onclick="addMockItem('file')" class="tile-surface hover:border-[#582BF5] h-12 px-3.5 flex items-center justify-center gap-2.5 text-[13px] font-semibold text-[#F8FAFC] transition">
+            <svg class="w-4 h-4 text-[#C185FC]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" x2="12" y1="18" y2="12"/><line x1="9" x2="15" y1="15" y2="15"/></svg>
+            <span>+ Archivos</span>
+          </button>
+          <button onclick="addMockItem('folder')" class="tile-surface hover:border-[#582BF5] h-12 px-3.5 flex items-center justify-center gap-2.5 text-[13px] font-semibold text-[#F8FAFC] transition">
+            <svg class="w-4 h-4 text-[#C185FC]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            <span>+ Carpeta</span>
+          </button>
+        </div>
+
+        <!-- Cola de archivos seleccionados -->
+        <div class="panel-card flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div class="px-4 py-3 border-b border-[#181B22] flex items-center justify-between gap-2">
+            <div>
+              <h2 class="text-[13px] font-bold text-[#F8FAFC]">Cola de envío (3)</h2>
+              <p class="text-[11px] font-mono text-[#64748B]">Total: 1.18 GB</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="openSheet('sheet-clean-queue')" class="px-3 py-1.5 rounded-[12px] btn-secondary hover:bg-[#242834] text-[11px] font-semibold text-[#94A3B8] hover:text-[#F8FAFC] flex items-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                <span>Limpiar</span>
+              </button>
+              <button class="px-3.5 py-1.5 rounded-[12px] btn-primary text-[11px] font-bold text-white">
+                Enviar ahora
+              </button>
+            </div>
+          </div>
+
+          <div id="sendQueueList" class="flex-1 overflow-y-auto divide-y divide-[#181B22]">
+            <div class="px-4 py-3 flex items-center justify-between gap-3">
+              <div class="min-w-0 space-y-0.5">
+                <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">Backup_Fotos_Viaje/</p>
+                <p class="text-[11px] font-mono text-[#64748B] truncate">/DCIM/Camera · 48 archivos · 840 MB</p>
+              </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-semibold">Listo</span>
+                <button onclick="this.closest('div.px-4').remove()" class="w-6 h-6 rounded-full hover:bg-[#1B1E26] text-[#64748B] hover:text-rose-400 text-xs flex items-center justify-center transition">✕</button>
+              </div>
+            </div>
+
+            <div class="px-4 py-3 flex items-center justify-between gap-3 bg-[#171329]">
+              <div class="min-w-0 space-y-0.5">
+                <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">Clip_4K_Concierto.mp4</p>
+                <p class="text-[11px] font-mono text-[#94A3B8] truncate">/Movies · 312 MB</p>
+              </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="px-2.5 py-0.5 rounded-full bg-[#221846] border border-[#332763] text-[#C185FC] text-[10px] font-mono font-semibold">Enviando</span>
+                <button onclick="this.closest('div.px-4').remove()" class="w-6 h-6 rounded-full hover:bg-[#242834] text-[#94A3B8] hover:text-rose-400 text-xs flex items-center justify-center transition">✕</button>
+              </div>
+            </div>
+
+            <div class="px-4 py-3 flex items-center justify-between gap-3">
+              <div class="min-w-0 space-y-0.5">
+                <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">Notas_Proyecto.pdf</p>
+                <p class="text-[11px] font-mono text-[#64748B] truncate">/Documents · 28 MB</p>
+              </div>
+              <div class="flex items-center gap-2.5 shrink-0">
+                <span class="px-2.5 py-0.5 rounded-full bg-[#18191E] border border-[#262B36] text-[#94A3B8] text-[10px] font-mono font-semibold">En cola</span>
+                <button onclick="this.closest('div.px-4').remove()" class="w-6 h-6 rounded-full hover:bg-[#1B1E26] text-[#64748B] hover:text-rose-400 text-xs flex items-center justify-center transition">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Inferior Anclado: Transferencia en Curso (badgeSize 52px) -->
+        <div class="panel-card p-3 space-y-2.5 shrink-0">
+          <div class="flex items-center gap-3.5">
+            <div class="relative w-[52px] h-[52px] shrink-0 flex items-center justify-center">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" stroke="#181B22" stroke-width="9" fill="transparent"/>
+                <circle cx="50" cy="50" r="40" stroke="#7C3AED" stroke-width="9" stroke-dasharray="251.2" stroke-dashoffset="80" stroke-linecap="round" fill="transparent"/>
+              </svg>
+              <span class="absolute text-[12px] font-extrabold font-mono text-[#F8FAFC]">68%</span>
+            </div>
+            <div class="min-w-0 space-y-0.5">
+              <h3 class="text-[13px] font-bold text-[#F8FAFC]">Transferencia en curso</h3>
+              <p class="text-[11px] font-mono text-[#94A3B8] truncate">802 MB / 1.18 GB · <span class="text-[#C185FC] font-semibold">42.5 MB/s</span> · 9s</p>
+              <p class="text-[11px] font-mono text-[#64748B] truncate">Clip_4K_Concierto.mp4</p>
+            </div>
+          </div>
+          <div class="w-full h-1.5 bg-[#181B22] rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-[#582BF5] via-[#7C3AED] to-[#C185FC] rounded-full" style="width: 68%;"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button class="h-10 rounded-[14px] btn-secondary hover:bg-[#242834] text-[12px] font-semibold text-[#F8FAFC] transition">❚❚ Pausar</button>
+            <button class="h-10 rounded-[14px] btn-danger-soft hover:bg-[#28131B] text-[12px] font-semibold text-rose-400 transition">✕ Cancelar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================== -->
+      <!-- TAB 2: RECIBIR                        -->
+      <!-- ===================================== -->
+      <section id="tab-recibir" class="android-tab hidden flex flex-col gap-2.5 flex-1 min-h-0">
+        <div class="panel-card p-3 space-y-2 shrink-0">
+          <div class="flex items-center justify-between">
+            <span class="text-[14px] font-bold text-[#F8FAFC]">Estación de Escucha</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-mono font-semibold text-emerald-400">● Activa :4242</span>
+          </div>
+          <p class="text-[11px] font-mono text-[#94A3B8] truncate">/storage/emulated/0/Download/CrossRelay</p>
+          <div class="pt-2 border-t border-[#181B22] flex items-center justify-between text-[11px]">
+            <span class="text-[#C185FC] font-mono">Zero-Trust: Solo vinculados</span>
+            <span class="text-emerald-400 font-mono">MediaStore Sync ✓</span>
+          </div>
+        </div>
+
+        <div class="panel-card flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div class="px-4 py-3 border-b border-[#181B22] flex items-center justify-between gap-2">
+            <div class="min-w-0 space-y-0.5">
+              <h2 class="text-[13px] font-bold text-[#F8FAFC] truncate">Lote: Sakurasou (24 archivos)</h2>
+              <p class="text-[11px] font-mono text-[#C185FC]">Origen: EDRO08-Win11 · Carpeta dedicada</p>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-semibold shrink-0">SHA-256</span>
+          </div>
+          <div class="flex-1 overflow-y-auto divide-y divide-[#181B22]">
+            <div class="px-4 py-3 flex items-center justify-between gap-3">
+              <div class="min-w-0 space-y-0.5">
+                <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">Sakurasou - 01.mkv</p>
+                <p class="text-[11px] font-mono text-[#64748B]">264 MB</p>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-semibold">Verificado ✓</span>
+            </div>
+            <div class="px-4 py-3 flex items-center justify-between gap-3 bg-[#171329]">
+              <div class="min-w-0 space-y-0.5">
+                <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">Sakurasou - 02.mkv</p>
+                <p class="text-[11px] font-mono text-[#94A3B8]">268 MB</p>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-[#221846] border border-[#332763] text-[#C185FC] text-[10px] font-mono font-semibold">Recibiendo</span>
+            </div>
+            <div class="px-4 py-3 flex items-center justify-between gap-3">
+              <div class="min-w-0 space-y-0.5">
+                <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">Sakurasou - 03.mkv</p>
+                <p class="text-[11px] font-mono text-[#64748B]">271 MB</p>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-[#18191E] border border-[#262B36] text-[#94A3B8] text-[10px] font-mono font-semibold">En espera</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card p-3 space-y-2.5 shrink-0">
+          <div class="flex items-center justify-between gap-3">
+            <div class="space-y-0.5">
+              <h3 class="text-[13px] font-bold text-[#F8FAFC]">Recepción en curso (38%)</h3>
+              <p class="text-[11px] font-mono text-[#94A3B8]">2.34 GB / 6.16 GB · <span class="text-[#C185FC] font-semibold">64.2 MB/s</span> · 59s</p>
+            </div>
+            <button class="px-3.5 py-2 rounded-[14px] btn-danger-soft text-[12px] font-semibold text-rose-400">✕ Cancelar</button>
+          </div>
+          <div class="w-full h-1.5 bg-[#181B22] rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-[#582BF5] via-[#7C3AED] to-[#C185FC] rounded-full" style="width: 38%;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================== -->
+      <!-- TAB 3: DISPOSITIVOS                   -->
+      <!-- ===================================== -->
+      <section id="tab-dispositivos" class="android-tab hidden flex flex-col gap-2.5">
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="openPairRequest('MacBook-Pro-Sala', '192.168.0.22:4242')" class="h-11 px-3 rounded-[16px] btn-primary text-[12px] font-bold text-white">+ Vincular por PIN</button>
+          <button onclick="openSheet('sheet-peers')" class="h-11 px-3 tile-surface hover:border-[#582BF5] text-[12px] font-semibold text-[#F8FAFC] transition">Conectar IP:Puerto</button>
+        </div>
+
+        <!-- Descubiertos en LAN (Sin vincular) -->
+        <div class="space-y-1.5">
+          <p class="text-[10px] font-mono uppercase tracking-wider text-[#64748B] px-1">Descubiertos en LAN (Sin vincular)</p>
+          <div class="panel-card p-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-10 h-10 icon-tile flex items-center justify-center text-[#94A3B8] shrink-0">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+              </div>
+              <div class="min-w-0 space-y-0.5">
+                <h3 class="text-[13px] font-bold text-[#F8FAFC] truncate">MacBook-Pro-Sala</h3>
+                <p class="text-[10px] font-mono text-[#94A3B8] truncate">MACOS · 192.168.0.22:4242</p>
+              </div>
+            </div>
+            <button onclick="openPairRequest('MacBook-Pro-Sala', '192.168.0.22:4242')" class="px-3 py-1.5 rounded-[12px] bg-[#221846] hover:bg-[#2B1F58] border border-[#332763] text-[11px] font-semibold text-[#C185FC] shrink-0 transition">
+              Solicitar conexión
+            </button>
+          </div>
+        </div>
+
+        <p class="text-[10px] font-mono uppercase tracking-wider text-[#64748B] px-1 pt-0.5">Equipos vinculados (2)</p>
+
+        <div class="panel-card p-3 space-y-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-11 h-11 icon-tile flex items-center justify-center text-[#C185FC] shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+              </div>
+              <div class="min-w-0 space-y-0.5">
+                <h3 class="text-[14px] font-bold text-[#F8FAFC] truncate">Edro08-Ubuntu</h3>
+                <p class="text-[11px] font-mono text-emerald-400 truncate">● En línea · 192.168.0.14:4242</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-[#1E1738] border border-[#332763] text-[#C185FC] text-[10px] font-mono font-semibold shrink-0">LINUX</span>
+          </div>
+          <p class="text-[11px] font-mono text-[#64748B] truncate">Carpeta: /storage/emulated/0/Download/Edro08</p>
+          <div class="flex items-center justify-between gap-2.5 pt-2.5 border-t border-[#181B22]">
+            <div class="cr-dropdown relative">
+              <button type="button" onclick="toggleDropdown(this)" class="field-surface px-3 py-1.5 text-[12px] font-medium text-[#F8FAFC] flex items-center gap-2 hover:border-[#332763] transition">
+                <span class="cr-value">AutoAccept</span>
+                <svg class="cr-chevron w-3.5 h-3.5 text-[#94A3B8] transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="cr-menu hidden absolute left-0 bottom-full mb-1.5 w-44 bg-[#12141A] border border-[#262B36] rounded-[16px] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] z-30 space-y-0.5">
+                <button type="button" onclick="selectDropdownOption(this, 'AutoAccept')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between bg-[#221846] text-[#F8FAFC] font-semibold"><span>AutoAccept</span><span class="cr-check text-[#C185FC]">✓</span></button>
+                <button type="button" onclick="selectDropdownOption(this, 'Confirmar antes')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Confirmar antes</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+              </div>
+            </div>
+            <button class="px-3 py-1.5 rounded-[12px] btn-danger-soft text-[11px] font-semibold text-rose-400">Bloquear</button>
+          </div>
+        </div>
+
+        <div class="panel-card p-3 space-y-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-11 h-11 icon-tile flex items-center justify-center text-[#C185FC] shrink-0">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
+              </div>
+              <div class="min-w-0 space-y-0.5">
+                <h3 class="text-[14px] font-bold text-[#F8FAFC] truncate">EDRO08-Win11</h3>
+                <p class="text-[11px] font-mono text-emerald-400 truncate">● En línea · 192.168.0.16:4242</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-[#1E1738] border border-[#332763] text-[#C185FC] text-[10px] font-mono font-semibold shrink-0">WIN 11</span>
+          </div>
+          <p class="text-[11px] font-mono text-[#64748B] truncate">Carpeta: Global por defecto</p>
+          <div class="flex items-center justify-between gap-2.5 pt-2.5 border-t border-[#181B22]">
+            <div class="cr-dropdown relative">
+              <button type="button" onclick="toggleDropdown(this)" class="field-surface px-3 py-1.5 text-[12px] font-medium text-[#F8FAFC] flex items-center gap-2 hover:border-[#332763] transition">
+                <span class="cr-value">Confirmar antes</span>
+                <svg class="cr-chevron w-3.5 h-3.5 text-[#94A3B8] transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="cr-menu hidden absolute left-0 bottom-full mb-1.5 w-44 bg-[#12141A] border border-[#262B36] rounded-[16px] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] z-30 space-y-0.5">
+                <button type="button" onclick="selectDropdownOption(this, 'AutoAccept')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>AutoAccept</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+                <button type="button" onclick="selectDropdownOption(this, 'Confirmar antes')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between bg-[#221846] text-[#F8FAFC] font-semibold"><span>Confirmar antes</span><span class="cr-check text-[#C185FC]">✓</span></button>
+              </div>
+            </div>
+            <button class="px-3 py-1.5 rounded-[12px] btn-danger-soft text-[11px] font-semibold text-rose-400">Bloquear</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================== -->
+      <!-- TAB 4: HISTORIAL                      -->
+      <!-- ===================================== -->
+      <section id="tab-historial" class="android-tab hidden flex flex-col gap-2.5">
+        <div class="grid grid-cols-3 gap-2">
+          <button class="h-9 rounded-[12px] btn-primary text-[12px] font-bold text-white">Todos</button>
+          <button class="h-9 rounded-[12px] tile-surface text-[12px] font-semibold text-[#94A3B8]">Enviados</button>
+          <button class="h-9 rounded-[12px] tile-surface text-[12px] font-semibold text-[#94A3B8]">Recibidos</button>
+        </div>
+
+        <div class="panel-card p-3 space-y-1">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[13px] font-bold text-[#F8FAFC] truncate">Backup_Fotos_Viaje (48 archivos)</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-semibold shrink-0">↑ Enviado</span>
+          </div>
+          <p class="text-[11px] font-mono text-[#94A3B8]">Hacia: Edro08-Ubuntu · 840 MB · 46.8 MB/s</p>
+          <p class="text-[10px] text-[#64748B]">Hoy, 21:54 · SHA-256 verificado</p>
+        </div>
+
+        <div class="panel-card p-3 space-y-1">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[13px] font-bold text-[#F8FAFC] truncate">Sakurasou (24 archivos)</span>
+            <span class="px-2 py-0.5 rounded-full bg-[#221846] border border-[#332763] text-[#C185FC] text-[10px] font-mono font-semibold shrink-0">↓ Recibido</span>
+          </div>
+          <p class="text-[11px] font-mono text-[#94A3B8]">De: EDRO08-Win11 · 6.16 GB · 61.3 MB/s</p>
+          <p class="text-[10px] text-[#64748B]">Hoy, 20:12 · SHA-256 verificado</p>
+        </div>
+      </section>
+
+      <!-- ===================================== -->
+      <!-- TAB 5: AJUSTES                        -->
+      <!-- ===================================== -->
+      <section id="tab-ajustes" class="android-tab hidden flex flex-col gap-2.5">
+        <!-- Permisos del Sistema (compacto estilo Vaultk SettingsScreen) -->
+        <div class="panel-card p-3 space-y-2.5">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 icon-tile flex items-center justify-center text-[#C185FC] shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-[13px] font-bold text-[#F8FAFC] leading-tight">Permisos del sistema</h3>
+              <p class="text-[10px] text-[#94A3B8] truncate">Acceso directo sin SAF y servicio en segundo plano</p>
+            </div>
+          </div>
+
+          <!-- MANAGE_EXTERNAL_STORAGE -->
+          <div id="perm-storage" data-granted="true" class="pt-2 border-t border-[#181B22] flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <p class="text-[12px] font-semibold text-[#F8FAFC] truncate">Acceso total a archivos</p>
+                <span class="perm-badge px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-mono shrink-0">Activo</span>
+              </div>
+              <p class="perm-status text-[10px] font-mono text-[#64748B] truncate">MANAGE_EXTERNAL_STORAGE · Go .so directo</p>
+            </div>
+            <button onclick="togglePerm('perm-storage')" class="px-2.5 py-1 rounded-[10px] btn-secondary text-[11px] font-semibold text-[#C185FC] hover:bg-[#1E1738] transition shrink-0">
+              Gestionar
+            </button>
+          </div>
+
+          <!-- POST_NOTIFICATIONS -->
+          <div id="perm-notif" data-granted="true" class="pt-2 border-t border-[#181B22] flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <p class="text-[12px] font-semibold text-[#F8FAFC] truncate">Notificaciones del servicio</p>
+                <span class="perm-badge px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-mono shrink-0">Activo</span>
+              </div>
+              <p class="perm-status text-[10px] font-mono text-[#64748B] truncate">POST_NOTIFICATIONS · Progreso ForegroundService</p>
+            </div>
+            <button onclick="togglePerm('perm-notif')" class="px-2.5 py-1 rounded-[10px] btn-secondary text-[11px] font-semibold text-[#C185FC] hover:bg-[#1E1738] transition shrink-0">
+              Gestionar
+            </button>
+          </div>
+        </div>
+
+        <!-- Throttling -->
+        <div class="panel-card p-3 space-y-1.5">
+          <span class="text-[12px] font-bold text-[#F8FAFC] block">Límite de Velocidad (Throttling)</span>
+          <div class="cr-dropdown relative" data-sync-badge="true">
+            <button type="button" onclick="toggleDropdown(this)" class="w-full field-surface px-3 py-2 text-[12px] font-semibold text-[#F8FAFC] flex items-center justify-between hover:border-[#332763] transition">
+              <span class="cr-value truncate">Sin límite (Máxima velocidad LAN)</span>
+              <svg class="cr-chevron w-4 h-4 text-[#94A3B8] transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="cr-menu hidden absolute left-0 right-0 top-full mt-1.5 bg-[#12141A] border border-[#262B36] rounded-[16px] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] z-30 space-y-0.5">
+              <button type="button" onclick="selectDropdownOption(this, 'Sin límite (Máxima velocidad LAN)', 'Sin límite')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between bg-[#221846] text-[#F8FAFC] font-semibold"><span>Sin límite (Máxima velocidad LAN)</span><span class="cr-check text-[#C185FC]">✓</span></button>
+              <button type="button" onclick="selectDropdownOption(this, '100 MB/s', '100 MB/s')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>100 MB/s</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+              <button type="button" onclick="selectDropdownOption(this, '50 MB/s', '50 MB/s')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>50 MB/s</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+              <button type="button" onclick="selectDropdownOption(this, '10 MB/s', '10 MB/s')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>10 MB/s</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Identidad y Red -->
+        <div class="panel-card p-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-[12px] font-bold text-[#F8FAFC]">Identidad y Red</h3>
+            <span class="text-[10px] font-mono text-emerald-400">● :4242 · UDP :4243</span>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-semibold text-[#94A3B8]">Nombre del Dispositivo</label>
+            <input type="text" value="Galaxy-S24-Edro" class="w-full field-surface px-3 py-2 text-[12px] font-bold text-[#F8FAFC] outline-none focus:border-[#582BF5]">
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-semibold text-[#94A3B8]">Modo de Descubrimiento mDNS</label>
+            <div class="cr-dropdown relative">
+              <button type="button" onclick="toggleDropdown(this)" class="w-full field-surface px-3 py-2 text-[12px] text-[#F8FAFC] flex items-center justify-between hover:border-[#332763] transition">
+                <span class="cr-value truncate">Visible para Todos en la red</span>
+                <svg class="cr-chevron w-4 h-4 text-[#94A3B8] transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="cr-menu hidden absolute left-0 right-0 top-full mt-1.5 bg-[#12141A] border border-[#262B36] rounded-[16px] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] z-30 space-y-0.5">
+                <button type="button" onclick="selectDropdownOption(this, 'Visible para Todos en la red')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between bg-[#221846] text-[#F8FAFC] font-semibold"><span>Visible para Todos en la red</span><span class="cr-check text-[#C185FC]">✓</span></button>
+                <button type="button" onclick="selectDropdownOption(this, 'Solo Dispositivos Emparejados')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Solo Dispositivos Emparejados</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+                <button type="button" onclick="selectDropdownOption(this, 'Oculto / Modo Sigilo')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Oculto / Modo Sigilo</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="space-y-1">
+              <label class="text-[10px] font-semibold text-[#94A3B8]">Política Puertos</label>
+              <div class="cr-dropdown relative">
+                <button type="button" onclick="toggleDropdown(this)" class="w-full field-surface px-2.5 py-2 text-[11px] text-[#F8FAFC] flex items-center justify-between hover:border-[#332763] transition">
+                  <span class="cr-value truncate">Automático</span>
+                  <svg class="cr-chevron w-3.5 h-3.5 text-[#94A3B8] transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="cr-menu hidden absolute left-0 right-0 top-full mt-1.5 bg-[#12141A] border border-[#262B36] rounded-[16px] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] z-30 space-y-0.5">
+                  <button type="button" onclick="selectDropdownOption(this, 'Automático')" class="cr-opt w-full px-2.5 py-1.5 rounded-[10px] text-[11px] text-left flex items-center justify-between bg-[#221846] text-[#F8FAFC] font-semibold"><span>Automático</span><span class="cr-check text-[#C185FC]">✓</span></button>
+                  <button type="button" onclick="selectDropdownOption(this, 'Puerto fijo')" class="cr-opt w-full px-2.5 py-1.5 rounded-[10px] text-[11px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Puerto fijo</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+                  <button type="button" onclick="selectDropdownOption(this, 'Rango (máx. 30)')" class="cr-opt w-full px-2.5 py-1.5 rounded-[10px] text-[11px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Rango (máx. 30)</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] font-semibold text-[#94A3B8]">Puerto / Rango</label>
+              <input type="text" value="4242, 4244-4248" readonly class="w-full field-surface px-2.5 py-2 text-[11px] font-mono font-bold text-[#C185FC] outline-none">
+            </div>
+          </div>
+          <button onclick="openSheet('sheet-diagnostics')" class="w-full h-9 rounded-[12px] bg-[#1E1738] hover:bg-[#261D46] border border-[#332763] text-[11px] font-semibold text-[#C185FC] transition">
+            Diagnosticar Puertos y Red
+          </button>
+        </div>
+
+        <!-- Almacenamiento y Archivos -->
+        <div class="panel-card p-3 space-y-2">
+          <h3 class="text-[12px] font-bold text-[#F8FAFC]">Almacenamiento y Archivos</h3>
+          <div class="space-y-1">
+            <label class="text-[10px] font-semibold text-[#94A3B8]">Carpeta Global de Descargas</label>
+            <div class="flex gap-2">
+              <input type="text" value="/storage/emulated/0/Download/CrossRelay" class="flex-1 field-surface px-3 py-2 text-[10px] font-mono text-[#94A3B8] outline-none">
+              <button class="px-3 py-1.5 rounded-[12px] btn-secondary text-[11px] font-semibold text-[#F8FAFC]">Cambiar</button>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-semibold text-[#94A3B8]">Archivos Duplicados al Recibir</label>
+            <div class="cr-dropdown relative">
+              <button type="button" onclick="toggleDropdown(this)" class="w-full field-surface px-3 py-2 text-[12px] text-[#F8FAFC] flex items-center justify-between hover:border-[#332763] transition">
+                <span class="cr-value truncate">Renombrar (archivo (1))</span>
+                <svg class="cr-chevron w-4 h-4 text-[#94A3B8] transition-transform shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="cr-menu hidden absolute left-0 right-0 bottom-full mb-1.5 bg-[#12141A] border border-[#262B36] rounded-[16px] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] z-30 space-y-0.5">
+                <button type="button" onclick="selectDropdownOption(this, 'Renombrar (archivo (1))')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between bg-[#221846] text-[#F8FAFC] font-semibold"><span>Renombrar (archivo (1))</span><span class="cr-check text-[#C185FC]">✓</span></button>
+                <button type="button" onclick="selectDropdownOption(this, 'Sobrescribir existente')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Sobrescribir existente</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+                <button type="button" onclick="selectDropdownOption(this, 'Omitir si ya existe')" class="cr-opt w-full px-3 py-2 rounded-[11px] text-[12px] text-left flex items-center justify-between text-[#94A3B8] hover:bg-[#1B1E26] hover:text-[#F8FAFC]"><span>Omitir si ya existe</span><span class="cr-check hidden text-[#C185FC]">✓</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nodos Bloqueados -->
+        <div class="panel-card p-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-[12px] font-bold text-[#F8FAFC]">Nodos Bloqueados</h3>
+            <span class="text-[10px] font-mono text-[#64748B]">1 nodo</span>
+          </div>
+          <div class="flex items-center justify-between px-3 py-2 rounded-[12px] bg-[#18191E] border border-[#3F1922]">
+            <span class="text-[11px] font-mono text-rose-300">laptop-desconocida</span>
+            <button class="px-2.5 py-1 rounded-[10px] btn-secondary text-[10px] font-semibold text-[#F8FAFC]">Desbloquear</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom NavigationBar (Material 3 Pill estilo Vaultk + altura 84px estilo Structa) -->
+    <nav class="h-[82px] px-2 pb-2 pt-1.5 bg-[#07080B] border-t border-[#181B22] grid grid-cols-5 items-center shrink-0">
+      <button onclick="switchAndroidTab('enviar', this)" class="nav-btn flex flex-col items-center justify-center gap-1">
+        <div class="nav-pill w-14 h-8 rounded-full bg-[#221846] text-[#C185FC] flex items-center justify-center transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </div>
+        <span class="nav-label text-[11px] font-semibold text-[#F8FAFC]">Enviar</span>
+      </button>
+      <button onclick="switchAndroidTab('recibir', this)" class="nav-btn flex flex-col items-center justify-center gap-1">
+        <div class="nav-pill w-14 h-8 rounded-full text-[#94A3B8] flex items-center justify-center transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+        </div>
+        <span class="nav-label text-[11px] font-medium text-[#94A3B8]">Recibir</span>
+      </button>
+      <button onclick="switchAndroidTab('dispositivos', this)" class="nav-btn flex flex-col items-center justify-center gap-1">
+        <div class="nav-pill w-14 h-8 rounded-full text-[#94A3B8] flex items-center justify-center transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>
+        </div>
+        <span class="nav-label text-[11px] font-medium text-[#94A3B8]">Equipos</span>
+      </button>
+      <button onclick="switchAndroidTab('historial', this)" class="nav-btn flex flex-col items-center justify-center gap-1">
+        <div class="nav-pill w-14 h-8 rounded-full text-[#94A3B8] flex items-center justify-center transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <span class="nav-label text-[11px] font-medium text-[#94A3B8]">Historial</span>
+      </button>
+      <button onclick="switchAndroidTab('ajustes', this)" class="nav-btn flex flex-col items-center justify-center gap-1">
+        <div class="nav-pill w-14 h-8 rounded-full text-[#94A3B8] flex items-center justify-center transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <span class="nav-label text-[11px] font-medium text-[#94A3B8]">Ajustes</span>
+      </button>
+    </nav>
+
+    <!-- ===================================== -->
+    <!-- BOTTOM SHEETS INTERACTIVOS            -->
+    <!-- ===================================== -->
+
+    <!-- Sheet: Selector de Peer + Conexión Manual -->
+    <div id="sheet-peers" class="sheet-overlay hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end z-40">
+      <div class="w-full bg-[#0E0F12] border-t border-[#262B36] rounded-t-[28px] p-5 space-y-3.5">
+        <div class="w-10 h-1 bg-[#262B36] rounded-full mx-auto"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-[15px] font-bold text-[#F8FAFC]">Seleccionar Equipo en LAN</h3>
+          <button onclick="closeSheets()" class="text-xs font-semibold text-[#94A3B8] hover:text-white">Cerrar</button>
+        </div>
+        <div class="space-y-2.5">
+          <button onclick="pickPeer('Edro08-Ubuntu', 'LINUX · 192.168.0.14:4242')" class="w-full p-3.5 rounded-[17px] bg-[#171329] border border-[#7C3AED] text-left space-y-0.5">
+            <p class="text-[13px] font-bold text-[#F8FAFC]">Edro08-Ubuntu</p>
+            <p class="text-[11px] font-mono text-emerald-400">● En línea · 192.168.0.14:4242</p>
+          </button>
+          <button onclick="pickPeer('EDRO08-Win11', 'WIN 11 · 192.168.0.16:4242')" class="w-full p-3.5 tile-surface text-left space-y-0.5 hover:border-[#332763]">
+            <p class="text-[13px] font-bold text-[#F8FAFC]">EDRO08-Win11</p>
+            <p class="text-[11px] font-mono text-emerald-400">● En línea · 192.168.0.16:4242</p>
+          </button>
+        </div>
+        <div class="pt-3 border-t border-[#181B22] flex gap-2">
+          <input type="text" placeholder="IP:puerto manual (ej. 192.168.0.20:4244)" class="flex-1 field-surface px-3.5 py-2.5 text-xs font-mono text-[#F8FAFC] outline-none">
+          <button onclick="closeSheets()" class="px-4 py-2.5 rounded-[14px] btn-primary text-xs font-bold text-white">Probar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet: PIN 6 Dígitos (Solicitar conexión / Mostrar mi PIN) -->
+    <div id="sheet-pin" class="sheet-overlay hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end z-40">
+      <div class="w-full bg-[#0E0F12] border-t border-[#262B36] rounded-t-[28px] p-5 space-y-3.5">
+        <div class="w-10 h-1 bg-[#262B36] rounded-full mx-auto"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-[15px] font-bold text-[#F8FAFC]">Emparejamiento Zero-Trust</h3>
+          <button onclick="closeSheets()" class="text-xs font-semibold text-[#94A3B8] hover:text-white">Cerrar</button>
+        </div>
+
+        <!-- Selector de flujo: Solicitar vs Mostrar -->
+        <div class="grid grid-cols-2 gap-1.5 p-1 rounded-[14px] bg-[#12141A] border border-[#181B22]">
+          <button id="pinTabRequest" onclick="switchPinMode('request')" class="py-1.5 rounded-[10px] bg-[#221846] text-[11px] font-semibold text-[#C185FC] transition">Solicitar conexión</button>
+          <button id="pinTabShow" onclick="switchPinMode('show')" class="py-1.5 rounded-[10px] text-[11px] font-medium text-[#94A3B8] transition">Mostrar mi PIN</button>
+        </div>
+
+        <!-- Modo 1: Solicitar conexión (Ingresar PIN del equipo remoto) -->
+        <div id="pinModeRequest" class="space-y-3">
+          <div class="p-3 rounded-[14px] bg-[#12141A] border border-[#181B22] flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <p id="pairTargetName" class="text-[13px] font-bold text-[#F8FAFC] truncate">MacBook-Pro-Sala</p>
+              <p id="pairTargetIp" class="text-[10px] font-mono text-[#94A3B8] truncate">192.168.0.22:4242</p>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-mono shrink-0">Desafío activo</span>
+          </div>
+          <p class="text-xs text-[#94A3B8]">Digita el PIN de 6 dígitos que aparece en la pantalla de <span id="pairTargetInline" class="font-semibold text-[#F8FAFC]">MacBook-Pro-Sala</span>:</p>
+          <input id="pinCodeInput" type="text" maxlength="6" placeholder="000000" class="w-full py-3 px-4 rounded-[16px] bg-[#12141A] border border-[#332763] text-center text-2xl font-mono font-extrabold tracking-[0.4em] text-[#C185FC] outline-none focus:border-[#7C3AED]">
+          <button onclick="closeSheets()" class="w-full h-11 rounded-[14px] btn-primary text-xs font-bold text-white">Verificar y vincular</button>
+        </div>
+
+        <!-- Modo 2: Mostrar mi PIN (cuando el otro equipo solicita conectarse a ti) -->
+        <div id="pinModeShow" class="hidden space-y-3 text-center">
+          <p class="text-xs text-[#94A3B8]">Digita este PIN en el equipo remoto antes de que expire:</p>
+          <div class="py-3.5 px-4 rounded-[17px] bg-[#12141A] border border-[#332763] text-3xl font-mono font-extrabold tracking-[0.35em] text-[#C185FC]">
+            849201
+          </div>
+          <p class="text-[11px] font-mono text-emerald-400">Expira en 54s · Máx. 3 intentos</p>
+          <button onclick="closeSheets()" class="w-full h-11 rounded-[14px] btn-secondary text-xs font-semibold text-[#F8FAFC]">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet: Solicitud Entrante (AskConfirmation) -->
+    <div id="sheet-incoming" class="sheet-overlay hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end z-40">
+      <div class="w-full bg-[#0E0F12] border-t border-[#262B36] rounded-t-[28px] p-5 space-y-3.5">
+        <div class="w-10 h-1 bg-[#262B36] rounded-full mx-auto"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-[15px] font-bold text-[#F8FAFC]">Solicitud de Recepción</h3>
+          <span class="px-2.5 py-0.5 rounded-full bg-[#221846] border border-[#332763] text-[#C185FC] text-[10px] font-mono font-semibold">TLS 1.3 Verificado</span>
+        </div>
+        <p class="text-xs text-[#94A3B8]"><span class="font-bold text-[#F8FAFC]">EDRO08-Win11</span> quiere enviarte <span class="font-mono text-[#C185FC]">24 archivos (6.16 GB)</span>.</p>
+        <p class="text-[11px] font-mono text-[#64748B]">Destino: /storage/emulated/0/Download/CrossRelay</p>
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button onclick="closeSheets()" class="h-11 rounded-[14px] btn-danger-soft text-xs font-bold text-rose-400">Rechazar</button>
+          <button onclick="closeSheets(); switchAndroidTab('recibir', document.querySelectorAll('.nav-btn')[1])" class="h-11 rounded-[14px] btn-primary text-xs font-bold text-white">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheet: Diagnóstico Puertos -->
+    <div id="sheet-diagnostics" class="sheet-overlay hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end z-40">
+      <div class="w-full bg-[#0E0F12] border-t border-[#262B36] rounded-t-[28px] p-5 space-y-3.5">
+        <div class="w-10 h-1 bg-[#262B36] rounded-full mx-auto"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-[15px] font-bold text-[#F8FAFC]">Diagnóstico de Puertos y Red</h3>
+          <button onclick="closeSheets()" class="text-xs font-semibold text-[#94A3B8] hover:text-white">Cerrar</button>
+        </div>
+        <div class="grid grid-cols-3 gap-2.5 text-center font-mono text-[11px]">
+          <div class="p-2.5 rounded-[14px] bg-emerald-950/30 border border-emerald-500/30 text-emerald-400">:4242<br><span class="text-[9px]">ACTIVO</span></div>
+          <div class="p-2.5 field-surface text-[#94A3B8]">:4244<br><span class="text-[9px] text-emerald-400">LIBRE</span></div>
+          <div class="p-2.5 field-surface text-[#94A3B8]">:4245<br><span class="text-[9px] text-emerald-400">LIBRE</span></div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <input type="text" value="192.168.0.14:4242" class="flex-1 field-surface px-3.5 py-2.5 text-xs font-mono text-[#F8FAFC] outline-none">
+          <button class="px-4 py-2.5 rounded-[14px] btn-primary text-xs font-bold text-white">Probar LAN</button>
+        </div>
+        <p class="text-[11px] text-emerald-400 font-mono">✓ MulticastLock activo · Enlace 192.168.0.14 alcanzado (3 ms)</p>
+      </div>
+    </div>
+
+    <!-- Sheet: Limpiar / Filtrar Cola -->
+    <div id="sheet-clean-queue" class="sheet-overlay hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end z-40">
+      <div class="w-full bg-[#0E0F12] border-t border-[#262B36] rounded-t-[28px] p-5 space-y-2.5">
+        <div class="w-10 h-1 bg-[#262B36] rounded-full mx-auto"></div>
+        <div class="flex items-center justify-between pb-1">
+          <h3 class="text-[15px] font-bold text-[#F8FAFC]">Limpiar Cola de Envío</h3>
+          <button onclick="closeSheets()" class="text-xs font-semibold text-[#94A3B8] hover:text-white">Cerrar</button>
+        </div>
+        <button onclick="cleanQueue('done')" class="w-full p-3.5 tile-surface hover:border-[#332763] text-left flex items-center justify-between transition">
+          <span class="text-[13px] font-semibold text-[#F8FAFC]">Limpiar completados / listos</span>
+          <span class="text-[11px] font-mono text-emerald-400">Listo ✓</span>
+        </button>
+        <button onclick="cleanQueue('pending')" class="w-full p-3.5 tile-surface hover:border-[#332763] text-left flex items-center justify-between transition">
+          <span class="text-[13px] font-semibold text-[#F8FAFC]">Limpiar pendientes en cola</span>
+          <span class="text-[11px] font-mono text-[#94A3B8]">En cola</span>
+        </button>
+        <button onclick="cleanQueue('all')" class="w-full p-3.5 rounded-[17px] btn-danger-soft hover:bg-[#28131B] text-left flex items-center justify-between transition">
+          <span class="text-[13px] font-semibold text-rose-300">Vaciar toda la cola</span>
+          <span class="text-[11px] font-mono text-rose-400">Todo</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchAndroidTab(name, btn) {
+      document.querySelectorAll('.android-tab').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + name).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        const pill = b.querySelector('.nav-pill');
+        const label = b.querySelector('.nav-label');
+        pill.classList.remove('bg-[#221846]', 'text-[#C185FC]');
+        pill.classList.add('text-[#94A3B8]');
+        label.classList.remove('text-[#F8FAFC]', 'font-semibold');
+        label.classList.add('text-[#94A3B8]', 'font-medium');
+      });
+      if (btn) {
+        const pill = btn.querySelector('.nav-pill');
+        const label = btn.querySelector('.nav-label');
+        pill.classList.add('bg-[#221846]', 'text-[#C185FC]');
+        pill.classList.remove('text-[#94A3B8]');
+        label.classList.add('text-[#F8FAFC]', 'font-semibold');
+        label.classList.remove('text-[#94A3B8]', 'font-medium');
+      }
+    }
+
+    function openSheet(id) {
+      closeSheets();
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeSheets() {
+      document.querySelectorAll('.sheet-overlay').forEach(el => el.classList.add('hidden'));
+    }
+
+    function pickPeer(name, ip) {
+      document.getElementById('selectedPeerName').textContent = name;
+      document.getElementById('selectedPeerIp').textContent = ip;
+      closeSheets();
+    }
+
+    function setAndroidSpeed(btn, label) {
+      document.querySelectorAll('.speed-chip').forEach(b => {
+        b.classList.remove('bg-[#221846]', 'border-[#7C3AED]', 'text-white', 'font-bold');
+        b.classList.add('field-surface', 'text-[#94A3B8]', 'font-semibold');
+      });
+      btn.classList.remove('field-surface', 'text-[#94A3B8]', 'font-semibold');
+      btn.classList.add('bg-[#221846]', 'border-[#7C3AED]', 'text-white', 'font-bold');
+      document.getElementById('topSpeedBadge').textContent = label;
+    }
+
+    function cleanQueue(mode) {
+      const items = Array.from(document.querySelectorAll('#sendQueueList > div'));
+      items.forEach(item => {
+        const txt = item.textContent || '';
+        if (mode === 'all') item.remove();
+        else if (mode === 'done' && txt.includes('Listo')) item.remove();
+        else if (mode === 'pending' && txt.includes('En cola')) item.remove();
+      });
+      closeSheets();
+    }
+
+    function addMockItem(type) {
+      const list = document.getElementById('sendQueueList');
+      const div = document.createElement('div');
+      div.className = 'px-4 py-3 flex items-center justify-between gap-3';
+      const title = type === 'folder' ? 'Nueva_Carpeta/' : 'Documento_Extra.zip';
+      const sub = type === 'folder' ? '/Download/Nueva_Carpeta · 12 archivos · 140 MB' : '/Download · 45 MB';
+      div.innerHTML = `
+        <div class="min-w-0 space-y-0.5">
+          <p class="text-[13px] font-semibold text-[#F8FAFC] truncate">${title}</p>
+          <p class="text-[11px] font-mono text-[#64748B] truncate">${sub}</p>
+        </div>
+        <div class="flex items-center gap-2.5 shrink-0">
+          <span class="px-2.5 py-0.5 rounded-full bg-[#18191E] border border-[#262B36] text-[#94A3B8] text-[10px] font-mono font-semibold">En cola</span>
+          <button onclick="this.closest('div.px-4').remove()" class="w-6 h-6 rounded-full hover:bg-[#1B1E26] text-[#64748B] hover:text-rose-400 text-xs flex items-center justify-center transition">✕</button>
+        </div>`;
+      list.appendChild(div);
+    }
+
+    function togglePerm(id) {
+      const box = document.getElementById(id);
+      const granted = box.dataset.granted === 'true';
+      const next = !granted;
+      box.dataset.granted = String(next);
+      const status = box.querySelector('.perm-status');
+      const badge = box.querySelector('.perm-badge');
+      if (next) {
+        status.textContent = id === 'perm-storage'
+          ? 'MANAGE_EXTERNAL_STORAGE · Go .so directo'
+          : 'POST_NOTIFICATIONS · Progreso ForegroundService';
+        status.className = 'perm-status text-[10px] font-mono text-[#64748B] truncate';
+        badge.textContent = 'Activo';
+        badge.className = 'perm-badge px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[9px] font-mono shrink-0';
+      } else {
+        status.textContent = 'Pendiente · Toca Gestionar para activar';
+        status.className = 'perm-status text-[10px] font-mono text-amber-400 truncate';
+        badge.textContent = 'Inactivo';
+        badge.className = 'perm-badge px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[9px] font-mono shrink-0';
+      }
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.cr-menu').forEach(m => m.classList.add('hidden'));
+      document.querySelectorAll('.cr-chevron').forEach(c => c.classList.remove('rotate-180'));
+    }
+
+    function toggleDropdown(btn) {
+      const wrap = btn.closest('.cr-dropdown');
+      const menu = wrap.querySelector('.cr-menu');
+      const chevron = wrap.querySelector('.cr-chevron');
+      const isOpen = !menu.classList.contains('hidden');
+      closeAllDropdowns();
+      if (!isOpen) {
+        menu.classList.remove('hidden');
+        chevron.classList.add('rotate-180');
+      }
+    }
+
+    function selectDropdownOption(optBtn, label, badgeLabel) {
+      const wrap = optBtn.closest('.cr-dropdown');
+      wrap.querySelector('.cr-value').textContent = label;
+      wrap.querySelectorAll('.cr-opt').forEach(o => {
+        o.classList.remove('bg-[#221846]', 'text-[#F8FAFC]', 'font-semibold');
+        o.classList.add('text-[#94A3B8]');
+        o.querySelector('.cr-check').classList.add('hidden');
+      });
+      optBtn.classList.add('bg-[#221846]', 'text-[#F8FAFC]', 'font-semibold');
+      optBtn.classList.remove('text-[#94A3B8]');
+      optBtn.querySelector('.cr-check').classList.remove('hidden');
+      if (wrap.dataset.syncBadge === 'true' && badgeLabel) {
+        document.getElementById('topSpeedBadge').textContent = badgeLabel;
+      }
+      closeAllDropdowns();
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.cr-dropdown')) closeAllDropdowns();
+    });
+
+    function switchPinMode(mode) {
+      const reqPane = document.getElementById('pinModeRequest');
+      const showPane = document.getElementById('pinModeShow');
+      const reqBtn = document.getElementById('pinTabRequest');
+      const showBtn = document.getElementById('pinTabShow');
+      if (mode === 'request') {
+        reqPane.classList.remove('hidden');
+        showPane.classList.add('hidden');
+        reqBtn.className = 'py-1.5 rounded-[10px] bg-[#221846] text-[11px] font-semibold text-[#C185FC] transition';
+        showBtn.className = 'py-1.5 rounded-[10px] text-[11px] font-medium text-[#94A3B8] transition';
+      } else {
+        showPane.classList.remove('hidden');
+        reqPane.classList.add('hidden');
+        showBtn.className = 'py-1.5 rounded-[10px] bg-[#221846] text-[11px] font-semibold text-[#C185FC] transition';
+        reqBtn.className = 'py-1.5 rounded-[10px] text-[11px] font-medium text-[#94A3B8] transition';
+      }
+    }
+
+    function openPairRequest(name, ip) {
+      document.getElementById('pairTargetName').textContent = name;
+      document.getElementById('pairTargetIp').textContent = ip;
+      document.getElementById('pairTargetInline').textContent = name;
+      document.getElementById('pinCodeInput').value = '';
+      switchPinMode('request');
+      openSheet('sheet-pin');
+    }
+  </script>
+</body>
+</html>

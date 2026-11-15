@@ -1,0 +1,3 @@
+<resources>
+    <string name="error_probe_failed">✕ No se pudo contactar a %1$s</string>
+</resources>

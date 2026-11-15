@@ -1,0 +1,49 @@
+# IDE & Editor
+.vscode/
+**/.idea/
+*.iml
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Distribución y artefactos compilados
+/dist/
+/core/dist/
+**/bin/
+**/obj/
+*.exe
+*.dll
+*.dylib
+*.so
+*.aar
+android/app/libs/*.jar
+desktop/**/crossrelay-core*
+
+# Archivos temporales de transferencia CrossRelay
+*.crossrelay.part
+
+# Gradle & Android Studio
+**/.gradle/
+**/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.aab
+*.apk
+output-metadata.json
+*.hprof
+*.log
+
+# Certificados, Keystores y secretos
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.crt
+google-services.json

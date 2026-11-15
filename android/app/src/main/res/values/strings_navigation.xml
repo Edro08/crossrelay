@@ -1,0 +1,7 @@
+<resources>
+    <string name="nav_send">Enviar</string>
+    <string name="nav_receive">Recibir</string>
+    <string name="nav_devices">Equipos</string>
+    <string name="nav_history">Historial</string>
+    <string name="nav_settings">Ajustes</string>
+</resources>

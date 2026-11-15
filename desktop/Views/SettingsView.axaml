@@ -1,0 +1,356 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CrossRelay.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="700"
+             x:Class="CrossRelay.Desktop.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+<Grid>
+    <Grid RowDefinitions="Auto,*" RowSpacing="20" Margin="24,16,24,20">
+        
+        <!-- Encabezado de la Pantalla Ajustes con Guardar Todos los Ajustes arriba -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Text="Ajustes del Sistema" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" />
+                <TextBlock Text="Configuración de nodo, control de ancho de banda y diagnósticos"
+                           FontSize="12" Foreground="#A1A1AA" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <TextBlock Text="{Binding StatusFeedback}" FontSize="11.5" Foreground="#10B981" FontWeight="Medium" VerticalAlignment="Center" />
+                <Button Command="{Binding SaveSettingsCommand}" Classes="btn-primary-fade" Padding="20,8">
+                    <TextBlock Text="Guardar Todos los Ajustes" FontSize="12" Foreground="#FFFFFF" FontWeight="Bold" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Contenido Full-Height distribuido hasta la barra inferior -->
+        <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="18">
+            <!-- 1. Limitador de Velocidad (Bandwidth Throttling - Superficie Obsidian #0E0F12) -->
+            <Border Grid.Row="0" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20">
+                <StackPanel Spacing="14">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="Límite de Velocidad de Transferencia (Bandwidth Throttling)" FontWeight="SemiBold" FontSize="13.5" Foreground="#FFFFFF" />
+                        <TextBlock Text="Ajusta cuánto ancho de banda de red puede consumir CrossRelay para coexistir sin latencia"
+                                   FontSize="11.5" Foreground="#A1A1AA" />
+                    </StackPanel>
+
+                    <!-- 4 Tarjetas de Límite Interactivas en Grid Horizontal -->
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+                        <!-- Opción 1: Sin Límite -->
+                        <Button Grid.Column="0" Command="{Binding SelectBandwidthModeCommand}" CommandParameter="unlimited"
+                                Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Border Background="{Binding UnlimitedBg}" BorderBrush="{Binding UnlimitedBorder}" BorderThickness="1.5" CornerRadius="12" Padding="14,12">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="Sin Límite" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Máximo (400+ MB/s)" FontSize="10" Foreground="{Binding UnlimitedSubFg}" FontFamily="Consolas, monospace" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+
+                        <!-- Opción 2: 100 MB/s -->
+                        <Button Grid.Column="1" Command="{Binding SelectBandwidthModeCommand}" CommandParameter="100"
+                                Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Border Background="{Binding Rate100Bg}" BorderBrush="{Binding Rate100Border}" BorderThickness="1.5" CornerRadius="12" Padding="14,12">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="100 MB/s" FontWeight="SemiBold" FontSize="12" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Red Gigabit" FontSize="10" Foreground="{Binding Rate100SubFg}" FontFamily="Consolas, monospace" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+
+                        <!-- Opción 3: 50 MB/s -->
+                        <Button Grid.Column="2" Command="{Binding SelectBandwidthModeCommand}" CommandParameter="50"
+                                Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Border Background="{Binding Rate50Bg}" BorderBrush="{Binding Rate50Border}" BorderThickness="1.5" CornerRadius="12" Padding="14,12">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="50 MB/s" FontWeight="SemiBold" FontSize="12" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Wi-Fi 5 Moderado" FontSize="10" Foreground="{Binding Rate50SubFg}" FontFamily="Consolas, monospace" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+
+                        <!-- Opción 4: 10 MB/s -->
+                        <Button Grid.Column="3" Command="{Binding SelectBandwidthModeCommand}" CommandParameter="10"
+                                Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Border Background="{Binding Rate10Bg}" BorderBrush="{Binding Rate10Border}" BorderThickness="1.5" CornerRadius="12" Padding="14,12">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="10 MB/s" FontWeight="SemiBold" FontSize="12" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Ahorro de Red" FontSize="10" Foreground="{Binding Rate10SubFg}" FontFamily="Consolas, monospace" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 2. Identidad y Red (Superficie Obsidian #0E0F12) -->
+            <Border Grid.Row="1" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                        <TextBlock Grid.Column="0" Text="Identidad y Red" FontWeight="SemiBold" FontSize="13.5" Foreground="#FFFFFF" />
+                        <TextBlock Grid.Column="1" Text="{Binding ActivePortBadgeText}" FontFamily="Consolas, monospace" FontSize="11" Foreground="#10B981" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16" RowSpacing="14">
+                        <StackPanel Grid.Row="0" Grid.Column="0" Spacing="6">
+                            <TextBlock Text="Nombre del Dispositivo en Red" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                            <TextBox Text="{Binding DeviceName}" FontWeight="Bold" FontSize="11.5" Padding="12,9" />
+                            <TextBlock Text="Nombre anunciado en el radar LAN y solicitudes de vinculación." FontSize="10" Foreground="#71717A" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Spacing="6">
+                            <TextBlock Text="Modo de Descubrimiento mDNS" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                            <ComboBox SelectedIndex="{Binding SelectedVisibilityIndex}" HorizontalAlignment="Stretch" Background="#0D0D10" BorderBrush="#23222B" CornerRadius="10" Padding="12,9" FontSize="11.5">
+                                <ComboBoxItem Content="Visible para Todos en la red" />
+                                <ComboBoxItem Content="Solo Dispositivos Emparejados" />
+                                <ComboBoxItem Content="Oculto / Modo Sigilo" />
+                            </ComboBox>
+                            <TextBlock Text="Determina si otros equipos en la LAN pueden descubrir tu nodo antes de vincularse." FontSize="10" Foreground="#71717A" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="0" Spacing="6">
+                            <TextBlock Text="Política de Puertos P2P (TLS 1.3)" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                            <ComboBox SelectedIndex="{Binding SelectedPortModeIndex}" HorizontalAlignment="Stretch" Background="#0D0D10" BorderBrush="#23222B" CornerRadius="10" Padding="12,9" FontSize="11.5">
+                                <ComboBoxItem Content="Automático (Pool 4242, 4244-4248)" />
+                                <ComboBoxItem Content="Puerto fijo" />
+                                <ComboBoxItem Content="Rango personalizado (máx. 30 puertos)" />
+                            </ComboBox>
+                            <TextBlock Text="Radar UDP fijo en :4243 para descubrimiento LAN." FontSize="10" Foreground="#71717A" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1" Spacing="6">
+                            <TextBlock Text="Puerto o Rango de Escucha (UDP Radar fijo en :4243)" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                            <TextBox Text="{Binding PortRangeText}" IsReadOnly="{Binding !IsPortRangeEditable}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="11.5" Foreground="#C185FC" Padding="12,9" />
+                            <TextBlock Text="En Automático usa :4242 primero y salta a 4244–4248 si está ocupado." FontSize="10" Foreground="#71717A" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 3. Almacenamiento y Archivos (Superficie Obsidian #0E0F12) -->
+            <Border Grid.Row="2" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20">
+                <StackPanel Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                        <TextBlock Grid.Column="0" Text="Almacenamiento y Archivos" FontWeight="SemiBold" FontSize="13.5" Foreground="#FFFFFF" />
+                        <TextBlock Grid.Column="1" Text="Recepción global" FontFamily="Consolas, monospace" FontSize="11" Foreground="#71717A" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Grid ColumnDefinitions="2*,*" ColumnSpacing="16">
+                        <StackPanel Grid.Column="0" Spacing="6">
+                            <TextBlock Text="Carpeta Global de Descargas" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox Grid.Column="0" Text="{Binding DownloadDirectory}" FontFamily="Consolas, monospace" FontSize="11.5" Foreground="#D4D4D8" Padding="12,9" />
+                                <Button Grid.Column="1" Click="OnChangeFolderClicked" Classes="btn-secondary" Content="Cambiar" Padding="14,9" CornerRadius="10" />
+                            </Grid>
+                            <TextBlock Text="Ruta base cuando el equipo remoto no tiene carpeta dedicada." FontSize="10" Foreground="#71717A" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="6">
+                            <TextBlock Text="Archivos Duplicados al Recibir" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                            <ComboBox SelectedIndex="{Binding SelectedDuplicatePolicyIndex}" HorizontalAlignment="Stretch" Background="#0D0D10" BorderBrush="#23222B" CornerRadius="10" Padding="12,9" FontSize="11.5">
+                                <ComboBoxItem Content="Renombrar (archivo (1))" />
+                                <ComboBoxItem Content="Sobrescribir existente" />
+                                <ComboBoxItem Content="Omitir si ya existe" />
+                            </ComboBox>
+                            <TextBlock Text="Acción si ya existe un archivo con el mismo nombre." FontSize="10" Foreground="#71717A" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Background="#0D0D10" BorderBrush="#1C1E26" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Traer ventana al frente al recibir solicitudes" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" />
+                                <TextBlock Text="Restaura CrossRelay si está minimizado o en bandeja al llegar un PIN o confirmación (desactívalo si estás presentando)." FontSize="10" Foreground="#71717A" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" IsChecked="{Binding BringToFrontOnRequest}" OnContent="Sí" OffContent="No" VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- 4. Nodos Bloqueados y Diagnósticos (2 Columnas Full-Height) -->
+            <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="18">
+                <!-- Nodos Bloqueados -->
+                <Border Grid.Column="0" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20" VerticalAlignment="Stretch">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="NODOS BLOQUEADOS" FontSize="11" FontWeight="Bold" Foreground="#D4D4D8" LetterSpacing="0.6" />
+                            <TextBlock Grid.Column="1" Text="{Binding BlacklistedCountText}" FontFamily="Consolas, monospace" FontSize="10.5" Foreground="#71717A" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="0,10,0,0">
+                            <TextBlock Text="Sin nodos bloqueados actualmente." FontSize="10.5" Foreground="#71717A"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       IsVisible="{Binding !HasBlacklistedPeers}" />
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" IsVisible="{Binding HasBlacklistedPeers}">
+                                <ItemsControl ItemsSource="{Binding BlacklistedPeers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Spacing="6" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#131316" BorderBrush="#3F1922" BorderThickness="1" CornerRadius="10" Padding="10,7">
+                                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                                                    <TextBlock Grid.Column="0" Text="{Binding}" FontFamily="Consolas, monospace" FontSize="11" Foreground="#FCA5A5" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                                    <Button Grid.Column="1"
+                                                            Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).UnblockPeerCommand}"
+                                                            CommandParameter="{Binding}"
+                                                            Classes="btn-secondary" Content="Desbloquear" Padding="9,4" FontSize="10.5" CornerRadius="8" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+
+                        <Border Grid.Row="2" BorderBrush="#181B22" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="0,10,0,0">
+                            <TextBlock Text="Los nodos bloqueados son rechazados a nivel TLS." FontSize="9.5" Foreground="#71717A" />
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Trazabilidad y Diagnóstico -->
+                <Border Grid.Column="1" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20" VerticalAlignment="Stretch">
+                    <Grid RowDefinitions="*,Auto">
+                        <StackPanel Grid.Row="0" Spacing="8">
+                            <TextBlock Text="TRAZABILIDAD Y DIAGNÓSTICO" FontSize="11" FontWeight="Bold" Foreground="#D4D4D8" LetterSpacing="0.6" />
+                            <TextBlock Text="Eventos TLS 1.3, puertos P2P y detección de bloqueos de firewall."
+                                       FontSize="9.5" Foreground="#A1A1AA" TextWrapping="Wrap" />
+                            <Button Command="{Binding OpenPortDiagnosticsCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                    Background="#1E1738" BorderBrush="#332763" BorderThickness="1" CornerRadius="10" Padding="0,8" Margin="0,4,0,0">
+                                <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Viewbox Width="13" Height="13" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconShield}" Stroke="#C185FC" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Diagnosticar Puertos y Firewall" FontSize="11.5" Foreground="#C185FC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding OpenLogsFolderCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                    Background="#18191E" BorderBrush="#262B36" BorderThickness="1" CornerRadius="10" Padding="0,8">
+                                <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Viewbox Width="13" Height="13" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconFolder}" Stroke="#C185FC" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Abrir Carpeta de Logs" FontSize="11.5" Foreground="#F8FAFC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                        <Border Grid.Row="1" BorderBrush="#181B22" BorderThickness="0,1,0,0" Padding="0,10,0,0" Margin="0,10,0,0">
+                            <TextBlock Text="Canal TLS 1.3 ECDSA P-256 verificado." FontSize="9.5" Foreground="#71717A" />
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+
+    <!-- MODAL: DIAGNÓSTICO DE PUERTOS Y FIREWALL -->
+    <Grid Background="#CC000000" IsVisible="{Binding IsPortDiagnosticsModalOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Border Background="#0E0F12" BorderBrush="#26283E" BorderThickness="1" CornerRadius="16"
+                Width="590" Padding="22" HorizontalAlignment="Center" VerticalAlignment="Center"
+                BoxShadow="0 10 30 0 #000000">
+            <StackPanel Spacing="16">
+                <Border BorderBrush="#181B22" BorderThickness="0,0,0,1" Padding="0,0,0,12">
+                    <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="Diagnóstico de Puertos P2P y Firewall" FontSize="15.5" FontWeight="Bold" Foreground="#FFFFFF" />
+                            <TextBlock Text="Disponibilidad local, regla de firewall y prueba real en LAN" FontSize="11.5" Foreground="#A1A1AA" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Command="{Binding ClosePortDiagnosticsCommand}"
+                                Background="#18191E" BorderThickness="0" CornerRadius="8" Width="30" Height="30" Padding="0">
+                            <Viewbox Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#A1A1AA" />
+                                </Canvas>
+                            </Viewbox>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Estado local del pool/rango -->
+                <StackPanel Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                        <TextBlock Grid.Column="0" Text="ESTADO LOCAL DEL POOL / RANGO" FontSize="10.5" FontWeight="Bold" Foreground="#D4D4D8" LetterSpacing="0.6" VerticalAlignment="Center" />
+                        <Button Grid.Column="1" Command="{Binding RunPortDiagnosticsCommand}"
+                                Background="#1E1738" BorderBrush="#332763" BorderThickness="1" CornerRadius="8" Padding="10,4">
+                            <TextBlock Text="Volver a probar" FontSize="11" Foreground="#C185FC" FontWeight="SemiBold" />
+                        </Button>
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding PortDiagnosticItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PortDiagnosticItemViewModel">
+                                <Border Background="{Binding CardBg}" BorderBrush="{Binding CardBorder}" BorderThickness="1" CornerRadius="10" Padding="10,7" Margin="0,0,8,8" Width="172">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" VerticalAlignment="Center">
+                                        <TextBlock Grid.Column="0" Text="{Binding PortLabel}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="11.5" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="{Binding StateLabel}" FontSize="10" Foreground="{Binding StateFg}" FontWeight="Medium" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- Firewall & Prueba LAN -->
+                <Border Background="#131316" BorderBrush="#1E2130" BorderThickness="1" CornerRadius="12" Padding="12">
+                    <StackPanel Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="Regla local de Firewall" FontSize="11.5" FontWeight="SemiBold" Foreground="#D4D4D8" VerticalAlignment="Center" />
+                            <Border Grid.Column="1" Background="{Binding FirewallStatusBg}" BorderBrush="{Binding FirewallStatusBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
+                                <TextBlock Text="{Binding FirewallStatusText}" FontSize="10.5" Foreground="{Binding FirewallStatusFg}" FontWeight="Medium" />
+                            </Border>
+                        </Grid>
+                        <Border BorderBrush="#1C1F2B" BorderThickness="0,1,0,0" Padding="0,10,0,0">
+                            <StackPanel Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <TextBox Grid.Column="0" Text="{Binding LanProbeIp}" PlaceholderText="IP o IP:puerto de otro equipo en tu LAN (ej: 192.168.0.16)..." FontFamily="Consolas, monospace" FontSize="11" Padding="10,6" />
+                                    <Button Grid.Column="1" Command="{Binding RunLanProbeCommand}" Background="#582BF5" BorderThickness="0" CornerRadius="8" Padding="12,6">
+                                        <TextBlock Text="Probar por LAN" FontSize="11" Foreground="#FFFFFF" FontWeight="Bold" />
+                                    </Button>
+                                </Grid>
+                                <TextBlock Text="{Binding LanProbeResult}" FontSize="10.5" Foreground="{Binding LanProbeResultFg}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Comandos de ayuda (UFW, Firewalld, Windows) -->
+                <StackPanel Spacing="6">
+                    <TextBlock Text="COMANDOS DE AYUDA SI HAY BLOQUEO" FontSize="10.5" FontWeight="Bold" Foreground="#D4D4D8" LetterSpacing="0.6" />
+                    <Border Background="#090A0D" BorderBrush="#181B22" BorderThickness="1" CornerRadius="10" Padding="10,7">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="UFW" FontSize="10" FontWeight="Bold" Foreground="#71717A" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding UfwHelpCommand}" FontFamily="Consolas, monospace" FontSize="10.5" Foreground="#D8B4FE" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            <Button Grid.Column="2" Command="{Binding CopyFirewallCmdCommand}" CommandParameter="{Binding UfwHelpCommand}" Classes="btn-secondary" Content="Copiar" Padding="8,3" FontSize="10" CornerRadius="6" />
+                        </Grid>
+                    </Border>
+                    <Border Background="#090A0D" BorderBrush="#181B22" BorderThickness="1" CornerRadius="10" Padding="10,7">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="Firewalld" FontSize="10" FontWeight="Bold" Foreground="#71717A" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding FirewalldHelpCommand}" FontFamily="Consolas, monospace" FontSize="10.5" Foreground="#6EE7B7" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            <Button Grid.Column="2" Command="{Binding CopyFirewallCmdCommand}" CommandParameter="{Binding FirewalldHelpCommand}" Classes="btn-secondary" Content="Copiar" Padding="8,3" FontSize="10" CornerRadius="6" />
+                        </Grid>
+                    </Border>
+                    <Border Background="#090A0D" BorderBrush="#181B22" BorderThickness="1" CornerRadius="10" Padding="10,7">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="Windows" FontSize="10" FontWeight="Bold" Foreground="#71717A" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding WindowsFwHelpCommand}" FontFamily="Consolas, monospace" FontSize="10.5" Foreground="#7DD3FC" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            <Button Grid.Column="2" Command="{Binding CopyFirewallCmdCommand}" CommandParameter="{Binding WindowsFwHelpCommand}" Classes="btn-secondary" Content="Copiar" Padding="8,3" FontSize="10" CornerRadius="6" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Grid>
+</UserControl>

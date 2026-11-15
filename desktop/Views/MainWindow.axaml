@@ -1,0 +1,306 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CrossRelay.Desktop.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="700"
+        x:Class="CrossRelay.Desktop.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="CrossRelay"
+        Width="1120" Height="740"
+        MinWidth="1000" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        WindowDecorations="BorderOnly"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="#000000">
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Contenedor Principal: Barra Lateral Plegable (#000000 Puro) + Vista Activa (#07080A Intermedio) -->
+        <SplitView Grid.Row="0"
+                   IsPaneOpen="{Binding IsPaneOpen}"
+                   DisplayMode="CompactInline"
+                   CompactPaneLength="56"
+                   OpenPaneLength="236"
+                   Background="#07080A"
+                   PaneBackground="#000000">
+
+            <!-- Barra Lateral Plegable (Sidebar) -->
+            <SplitView.Pane>
+                <Border BorderBrush="#181B22" BorderThickness="0,0,1,0" Padding="18,22" Background="#000000" PointerPressed="OnTitleBarPointerPressed">
+                    <Grid RowDefinitions="Auto,*">
+                        
+                        <!-- Encabezado de la Barra Lateral: Logo CrossRelay integrado sobre fondo #000000 -->
+                        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,28" VerticalAlignment="Center">
+                            <!-- Icono Oficial CrossRelay sobre Negro OLED Puro -->
+                            <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" ClipToBounds="True" Background="#000000">
+                                <Image Source="/Assets/crossrelay-logo.png" Width="40" Height="40" Stretch="UniformToFill" RenderOptions.BitmapInterpolationMode="HighQuality" />
+                            </Border>
+
+                            <!-- Nombre de la App y Lema Oficial -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="1"
+                                        IsVisible="{Binding IsPaneOpen}">
+                                <TextBlock Text="CrossRelay" FontWeight="Bold" FontSize="19" Foreground="#FFFFFF" />
+                                <TextBlock Text="Move files. Keep control." FontSize="11.5" FontWeight="Medium" Foreground="#A1A1AA" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Lista de Navegación -->
+                        <StackPanel Grid.Row="1" Spacing="6">
+                            <!-- Enviar -->
+                            <Button Classes="nav-btn" Classes.active="{Binding IsSendActive}"
+                                    Command="{Binding NavigateCommand}" CommandParameter="Enviar"
+                                    ToolTip.Tip="Enviar Archivos">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconSend}" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Enviar" IsVisible="{Binding IsPaneOpen}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Recibir -->
+                            <Button Classes="nav-btn" Classes.active="{Binding IsReceiveActive}"
+                                    Command="{Binding NavigateCommand}" CommandParameter="Recibir"
+                                    ToolTip.Tip="Recibir Archivos">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconReceive}" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Recibir" IsVisible="{Binding IsPaneOpen}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Dispositivos -->
+                            <Button Classes="nav-btn" Classes.active="{Binding IsLinksActive}"
+                                    Command="{Binding NavigateCommand}" CommandParameter="Dispositivos"
+                                    ToolTip.Tip="Dispositivos Confiables">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconDevices}" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Dispositivos" IsVisible="{Binding IsPaneOpen}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Historial -->
+                            <Button Classes="nav-btn" Classes.active="{Binding IsHistoryActive}"
+                                    Command="{Binding NavigateCommand}" CommandParameter="Historial"
+                                    ToolTip.Tip="Historial de Transferencias">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconHistory}" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Historial" IsVisible="{Binding IsPaneOpen}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Ajustes -->
+                            <Button Classes="nav-btn" Classes.active="{Binding IsSettingsActive}"
+                                    Command="{Binding NavigateCommand}" CommandParameter="Ajustes"
+                                    ToolTip.Tip="Ajustes del Sistema">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconSettings}" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Ajustes" IsVisible="{Binding IsPaneOpen}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </SplitView.Pane>
+
+            <!-- Área de Contenido Principal con Controles de Ventana Integrados -->
+            <SplitView.Content>
+                <Grid RowDefinitions="34,*">
+                    <!-- Franja Superior Integrada de Arrastre + Controles Minimalistas (— □ ✕) -->
+                    <Grid Grid.Row="0" Background="Transparent" PointerPressed="OnTitleBarPointerPressed">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,4,10,0" Spacing="2">
+                            <Button Classes="win-ctrl-btn" Click="OnMinimizeClick" ToolTip.Tip="Minimizar">
+                                <Viewbox Width="12" Height="12">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconMinimize}" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                            <Button Classes="win-ctrl-btn" Click="OnMaximizeClick" ToolTip.Tip="Maximizar / Restaurar">
+                                <Viewbox Width="11" Height="11">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconMaximize}" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                            <Button Classes="win-ctrl-btn close" Click="OnCloseClick" ToolTip.Tip="Cerrar">
+                                <Viewbox Width="12" Height="12">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconCross}" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Vista Activa -->
+                    <TransitioningContentControl Grid.Row="1" Content="{Binding CurrentPage}" />
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+
+        <!-- TOAST FLOTANTE NO BLOQUEANTE (Descarga Automática - Opción B) -->
+        <Border Grid.Row="0"
+                IsVisible="{Binding IsAutoReceiveToastVisible}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,42,20,0"
+                Width="320"
+                Background="#0E0F12"
+                BorderBrush="#582BF5"
+                BorderThickness="1.5"
+                CornerRadius="14"
+                Padding="14"
+                BoxShadow="0 10 28 0 #40582BF5">
+            <StackPanel Spacing="10">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8"
+                            Background="#1E1738" BorderBrush="#332763" BorderThickness="1"
+                            VerticalAlignment="Top">
+                        <Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="stroke-icon" Data="{StaticResource IconArrowDown}" Stroke="#C185FC" />
+                            </Canvas>
+                        </Viewbox>
+                    </Border>
+                    <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding AutoReceiveToastSender}" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding AutoReceiveToastTitle}" FontSize="11.5" Foreground="#A1A1AA" TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Command="{Binding DismissAutoReceiveToastCommand}"
+                            Background="Transparent" BorderThickness="0" Padding="4" VerticalAlignment="Top" ToolTip.Tip="Cerrar">
+                        <Viewbox Width="10" Height="10">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#71717A" />
+                            </Canvas>
+                        </Viewbox>
+                    </Button>
+                </Grid>
+
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding AutoReceiveToastProgress}"
+                             Height="5" CornerRadius="3" Background="#18191E" Foreground="#582BF5" />
+
+                <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                    <TextBlock Grid.Column="0" Text="{Binding AutoReceiveToastMetrics}"
+                               FontFamily="Consolas, monospace" FontSize="11" Foreground="#C185FC" VerticalAlignment="Center" />
+                    <Button Grid.Column="1" Command="{Binding OpenReceiveFromToastCommand}"
+                            Background="#582BF5" BorderThickness="0" CornerRadius="8" Padding="10,5">
+                        <TextBlock Text="Ver en Recibir" FontSize="11" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- MODAL GLOBAL 1: Desafío de PIN de 6 dígitos cuando otro equipo solicita vincularse a nosotros -->
+        <Grid Grid.Row="0" Background="#CC000000" IsVisible="{Binding IsPinDialogOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Background="#0E0F12" BorderBrush="#582BF5" BorderThickness="1.5" CornerRadius="16"
+                    Width="440" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BoxShadow="0 12 36 0 #000000">
+                <StackPanel Spacing="16">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Solicitud de Vinculación Entrante" FontSize="16" FontWeight="Bold" Foreground="#FFFFFF" />
+                        <TextBlock Text="{Binding PinRequesterName, StringFormat='El dispositivo &quot;{0}&quot; desea vincularse contigo.'}"
+                                   FontSize="12" Foreground="#A1A1AA" TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <Border Background="#131316" BorderBrush="#332763" BorderThickness="1" CornerRadius="12" Padding="20">
+                        <StackPanel HorizontalAlignment="Center" Spacing="6">
+                            <TextBlock Text="DIGITA ESTE PIN EN EL OTRO DISPOSITIVO:" FontSize="10" FontWeight="Bold" Foreground="#C185FC" LetterSpacing="0.8" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding PinCode}" FontFamily="Consolas, monospace" FontSize="34" FontWeight="Black" Foreground="#FFFFFF" LetterSpacing="6" HorizontalAlignment="Center" />
+                            <TextBlock Text="Expira automáticamente en 60 segundos" FontSize="10.5" Foreground="#71717A" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <Button Command="{Binding ClosePinDialogCommand}" Classes="btn-secondary" HorizontalAlignment="Right" Padding="16,7" CornerRadius="10">
+                        <TextBlock Text="Cerrar" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- MODAL GLOBAL 2: Confirmación de Transferencia Entrante (Política "Confirmar Antes") -->
+        <Grid Grid.Row="0" Background="#CC000000" IsVisible="{Binding IsIncomingTransferDialogOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Background="#0E0F12" BorderBrush="#582BF5" BorderThickness="1.5" CornerRadius="16"
+                    Width="460" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BoxShadow="0 12 36 0 #000000">
+                <StackPanel Spacing="16">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Transferencia Entrante de Equipo Vinculado" FontSize="16" FontWeight="Bold" Foreground="#FFFFFF" />
+                        <TextBlock Text="{Binding IncomingSenderName, StringFormat='Origen verificado: {0}'}" FontSize="12" Foreground="#C185FC" FontWeight="SemiBold" />
+                    </StackPanel>
+
+                    <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="16">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding IncomingBatchTitle}" FontWeight="Bold" FontSize="13.5" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="{Binding IncomingFilesCountText}" FontSize="11.5" Foreground="#A1A1AA" />
+                                <TextBlock Text="•" FontSize="11.5" Foreground="#71717A" />
+                                <TextBlock Text="{Binding IncomingSizeText}" FontFamily="Consolas, monospace" FontSize="11.5" Foreground="#10B981" FontWeight="Bold" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                        <Button Command="{Binding RejectIncomingTransferCommand}" Background="#1F1014" BorderBrush="#3F1922" BorderThickness="1" CornerRadius="10" Padding="16,8">
+                            <TextBlock Text="Rechazar" FontSize="12" FontWeight="SemiBold" Foreground="#EF4444" />
+                        </Button>
+                        <Button Command="{Binding AcceptIncomingTransferCommand}" Background="#582BF5" BorderThickness="0" CornerRadius="10" Padding="18,8">
+                            <TextBlock Text="Aceptar Descarga" FontSize="12" FontWeight="Bold" Foreground="#FFFFFF" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Barra Inferior de Estado de Red (Pure OLED #000000 + Acentos Electric Indigo / Lavender de Structa & Vaultk) -->
+        <Border Grid.Row="1" Background="#000000" BorderBrush="#181B22" BorderThickness="0,1,0,0" Height="34" Padding="16,0">
+            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                <!-- Indicador Izquierdo de Red e Identidad Local -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <Ellipse Width="7" Height="7" Fill="#10B981" VerticalAlignment="Center" />
+                    <TextBlock Text="En línea" FontWeight="SemiBold" FontSize="11.5" Foreground="#10B981" VerticalAlignment="Center" />
+                    <TextBlock Text="•" Foreground="#71717A" FontSize="11" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding LocalNodeName, FallbackValue='EDRO08'}" FontWeight="Medium" FontSize="11.5" Foreground="#F8FAFC" VerticalAlignment="Center" />
+                    <TextBlock FontFamily="Consolas, monospace" FontSize="11" Foreground="#71717A" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="({0}:{1})">
+                                <Binding Path="LocalIp" />
+                                <Binding Path="LocalPort" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock Text="•" Foreground="#71717A" FontSize="11" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding TlsStatus}" FontFamily="Consolas, monospace" FontWeight="Medium" FontSize="11" Foreground="#C185FC" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Métricas Derechas de Tráfico y Límite -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding UploadSpeed, FallbackValue='↑ 0.0 MB/s'}" FontFamily="Consolas, monospace" FontSize="11" Foreground="#10B981" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding DownloadSpeed, FallbackValue='↓ 0.0 MB/s'}" FontFamily="Consolas, monospace" FontSize="11" Foreground="#818CF8" VerticalAlignment="Center" />
+                    <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding BandwidthLimitStatus}" FontSize="11" Foreground="#A1A1AA" FontWeight="Medium" VerticalAlignment="Center" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

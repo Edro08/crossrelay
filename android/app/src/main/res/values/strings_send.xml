@@ -1,0 +1,19 @@
+<resources>
+    <string name="send_no_peer_selected">Sin equipo seleccionado</string>
+    <string name="send_select_peer_hint">Pulsa Cambiar o IP:Puerto</string>
+    <string name="send_pick_files">+ Archivos</string>
+    <string name="send_pick_folder">+ Carpeta</string>
+    <string name="send_queue_title">Cola de envío (%1$d)</string>
+    <string name="send_queue_posix_subtitle">Acceso directo POSIX</string>
+    <string name="send_now">Enviar ahora</string>
+    <string name="send_queue_empty">Selecciona archivos o carpetas para enviar</string>
+    <string name="send_transfer_in_progress">Transferencia en curso</string>
+    <string name="send_transfer_idle">En espera</string>
+    <string name="send_sheet_select_peer">Seleccionar Equipo en LAN</string>
+    <string name="send_sheet_no_peers">Sin equipos descubiertos aún. Usa conexión manual abajo.</string>
+    <string name="send_sheet_ip_placeholder">IP:puerto (ej. 192.168.0.14:4242)</string>
+    <string name="send_sheet_clean_title">Limpiar Cola de Envío</string>
+    <string name="send_clean_done">Limpiar completados / listos</string>
+    <string name="send_clean_pending">Limpiar pendientes en cola</string>
+    <string name="send_clean_all">Vaciar toda la cola</string>
+</resources>

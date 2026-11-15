@@ -1,0 +1,16 @@
+<resources>
+    <string name="action_accept">Aceptar</string>
+    <string name="action_reject">Rechazar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_resume">Reanudar</string>
+    <string name="action_change">Cambiar</string>
+    <string name="action_probe">Probar</string>
+    <string name="action_clean">Limpiar</string>
+    <string name="action_remove">Quitar</string>
+    <string name="action_save_settings">Guardar Ajustes</string>
+    <string name="action_unblock">Desbloquear</string>
+    <string name="action_block">Bloquear</string>
+    <string name="status_starting_core">Iniciando motor Go...</string>
+    <string name="status_online_ports">● TLS 1.3 :%1$d · UDP :4243</string>
+</resources>

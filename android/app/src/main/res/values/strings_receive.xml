@@ -1,0 +1,12 @@
+<resources>
+    <string name="receive_station_title">Estación de Escucha</string>
+    <string name="receive_station_active">● Activa :%1$d</string>
+    <string name="receive_zero_trust">Zero-Trust: Solo vinculados</string>
+    <string name="receive_mediastore_sync">MediaStore Sync ✓</string>
+    <string name="receive_live_title">Recepción en vivo</string>
+    <string name="receive_sha256">SHA-256</string>
+    <string name="receive_progress_summary">Recibiendo lote · %1$d%% · %2$s</string>
+    <string name="receive_cancel">Cancelar recepción</string>
+    <string name="receive_waiting">En espera de transferencias LAN TLS 1.3...</string>
+    <string name="receive_incoming_request_title">Solicitud de Recepción</string>
+</resources>

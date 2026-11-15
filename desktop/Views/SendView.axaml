@@ -1,0 +1,533 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CrossRelay.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="720"
+             x:Class="CrossRelay.Desktop.Views.SendView"
+             x:DataType="vm:SendViewModel">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked">#582BF5</SolidColorBrush>
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked">#582BF5</SolidColorBrush>
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver">#6A3DF7</SolidColorBrush>
+        <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver">#6A3DF7</SolidColorBrush>
+        <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked">#FFFFFF</SolidColorBrush>
+        <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver">#FFFFFF</SolidColorBrush>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="FlyoutPresenter.clean-popover">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="12" />
+        </Style>
+        <Style Selector="Button.clean-item">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="Button.clean-item:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#1A1C2E" />
+        </Style>
+        <Style Selector="Button.clean-item-danger">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+        </Style>
+        <Style Selector="Button.clean-item-danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2A1219" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <!-- Vista Principal (100% Fiel al Mockup): Dropzone Unificado -> Lista Prioritaria -> Transferencia Anclada Abajo -->
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24,14,24,14" RowSpacing="14">
+
+            <!-- ROW 0: Encabezado Superior + Píldora del Dispositivo Destino -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center" Margin="0,0,16,0">
+                    <TextBlock Text="Enviar Archivos" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" />
+                    <TextBlock Text="Streaming de alta velocidad sin límites de red"
+                               FontSize="12" Foreground="#A1A1AA" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <!-- Píldora del Dispositivo Seleccionado con Icono por SO + Botón Cambiar -->
+                <Border Grid.Column="1" Background="#0E0F12" BorderBrush="#1C1E2F" BorderThickness="1"
+                        CornerRadius="12" Padding="10,8" VerticalAlignment="Center">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8"
+                                Background="{Binding TargetPeerIconBg}" BorderBrush="{Binding TargetPeerIconBorder}" BorderThickness="1"
+                                VerticalAlignment="Center">
+                            <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Data="{StaticResource IconWindows}" Fill="{Binding TargetPeerIconFg}" IsVisible="{Binding IsTargetPeerWindows}" />
+                                    <Path Data="{StaticResource IconLinux}" Fill="{Binding TargetPeerIconFg}" IsVisible="{Binding IsTargetPeerLinux}" />
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconPhone}" Stroke="{Binding TargetPeerIconFg}" IsVisible="{Binding IsTargetPeerAndroid}" />
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding TargetPeerNameDisplay}"
+                                           FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                    <Ellipse Width="6" Height="6" Fill="{Binding TargetPeerOnlineColor}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding TargetPeerOnlineText}" FontSize="10.5" Foreground="{Binding TargetPeerOnlineColor}" FontWeight="Medium" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <TextBlock Text="{Binding TargetPeerSubtitleDisplay}"
+                                       FontSize="11" Foreground="#A1A1AA" FontFamily="Consolas, monospace" />
+                        </StackPanel>
+
+                        <Button Grid.Column="2" Command="{Binding OpenSwitchDeviceDialogCommand}"
+                                Background="#18191E" BorderBrush="#2A2C46" BorderThickness="1"
+                                CornerRadius="8" Padding="10,6" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconSwap}" Stroke="#C185FC" />
+                                    </Canvas>
+                                </Viewbox>
+                                <TextBlock Text="Cambiar" FontSize="11.5" Foreground="#C185FC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ROW 1: ZONA UNIFICADA ARRASTRE + BOTONES (+ Archivos / + Carpeta) -->
+            <Border Grid.Row="1" x:Name="DropZoneBorder" DragDrop.AllowDrop="True" Background="#0E0F12" CornerRadius="16">
+                <Grid>
+                    <Rectangle IsHitTestVisible="False" Fill="Transparent" Stroke="#2A2C46" StrokeThickness="1" StrokeDashArray="4,3" RadiusX="16" RadiusY="16" />
+                    <Grid ColumnDefinitions="Auto,*,Auto" Margin="18,12" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10"
+                                Background="#1E1738" BorderBrush="#332763" BorderThickness="1"
+                                VerticalAlignment="Center" Margin="0,0,14,0">
+                            <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconCloud}" Stroke="#C185FC" />
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="0,0,16,0">
+                            <TextBlock Text="Arrastra archivos o carpetas aquí para añadirlos al lote"
+                                       FontWeight="SemiBold" FontSize="12.5" Foreground="#FFFFFF"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="Soporta miles de archivos sin compresión con streaming directo TLS 1.3"
+                                       FontSize="11" Foreground="#A1A1AA"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Button Click="OnBrowseFilesClicked" Background="#18191E" BorderBrush="#2A2C46" BorderThickness="1"
+                                    CornerRadius="10" Padding="12,7" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconFile}" Stroke="#C185FC" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="+ Archivos" FontSize="12" Foreground="#F8FAFC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Click="OnBrowseFolderClicked" Background="#18191E" BorderBrush="#2A2C46" BorderThickness="1"
+                                    CornerRadius="10" Padding="12,7" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconFolder}" Stroke="#C185FC" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="+ Carpeta" FontSize="12" Foreground="#F8FAFC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ROW 2: PRIORIDAD CENTRAL - LISTA DE ARCHIVOS SELECCIONADOS -->
+            <Border Grid.Row="2" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" ClipToBounds="True">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Header de Archivos Seleccionados -->
+                    <Border Grid.Row="0" Background="#0B0C10" BorderBrush="#181B22" BorderThickness="0,0,0,1" Padding="18,11">
+                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                <CheckBox IsChecked="{Binding IsAllSelected, Mode=TwoWay}"
+                                          MinWidth="0" MinHeight="0" Padding="0" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding QueueHeaderTitle}"
+                                           FontSize="12.5" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                <TextBlock FontSize="12" Foreground="#A1A1AA" VerticalAlignment="Center">
+                                    <Run Text="Tamaño total: " />
+                                    <Run Text="{Binding TotalStagedSizeText}" FontWeight="Bold" Foreground="#FFFFFF" FontFamily="Consolas, monospace" />
+                                </TextBlock>
+
+                                <!-- Menú Limpiar -->
+                                <Button x:Name="CleanMenuButton" Background="#18191E" BorderBrush="#26283E" BorderThickness="1"
+                                        CornerRadius="8" Padding="10,6" VerticalAlignment="Center">
+                                    <Button.Flyout>
+                                        <Flyout Placement="BottomEdgeAlignedRight" FlyoutPresenterClasses="clean-popover">
+                                            <Border MinWidth="272" Background="#0E101A" BorderBrush="#26283E" BorderThickness="1"
+                                                    CornerRadius="12" Padding="6" BoxShadow="0 12 28 0 #CC000000">
+                                                <StackPanel Spacing="3">
+                                                    <TextBlock Text="OPCIONES DE LIMPIEZA" FontSize="10" FontWeight="Bold"
+                                                               Foreground="#64748B" LetterSpacing="0.8" Margin="10,5,10,3" />
+
+                                                    <Button Tag="completados" Click="OnCleanOptionClicked" Classes="clean-item">
+                                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+                                                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+                                                                <Ellipse Width="6" Height="6" Fill="#34D399" VerticalAlignment="Center" />
+                                                                <TextBlock Text="Completados" FontSize="12" FontWeight="Medium" Foreground="#E2E8F0" VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                            <TextBlock Grid.Column="1" Text="Filtrar" FontSize="10.5" FontFamily="Consolas, monospace" Foreground="#34D399" VerticalAlignment="Center" />
+                                                        </Grid>
+                                                    </Button>
+
+                                                    <Button Tag="errores" Click="OnCleanOptionClicked" Classes="clean-item">
+                                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+                                                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+                                                                <Ellipse Width="6" Height="6" Fill="#FB7185" VerticalAlignment="Center" />
+                                                                <TextBlock Text="Con errores" FontSize="12" FontWeight="Medium" Foreground="#E2E8F0" VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                            <TextBlock Grid.Column="1" Text="Filtrar" FontSize="10.5" FontFamily="Consolas, monospace" Foreground="#FB7185" VerticalAlignment="Center" />
+                                                        </Grid>
+                                                    </Button>
+
+                                                    <Button Tag="inactivos" Click="OnCleanOptionClicked" Classes="clean-item">
+                                                        <StackPanel Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+                                                            <Ellipse Width="6" Height="6" Fill="#FBBF24" VerticalAlignment="Center" />
+                                                            <TextBlock Text="Diferentes a En cola / En progreso" FontSize="12" FontWeight="Medium" Foreground="#E2E8F0" VerticalAlignment="Center" />
+                                                        </StackPanel>
+                                                    </Button>
+
+                                                    <Border Height="1" Background="#1F2133" Margin="4,4" />
+
+                                                    <Button Tag="todo" Click="OnCleanOptionClicked" Classes="clean-item-danger">
+                                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                            <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+                                                                <Canvas Width="24" Height="24">
+                                                                    <Path Classes="stroke-icon" Data="{StaticResource IconTrashSimple}" Stroke="#FB7185" />
+                                                                </Canvas>
+                                                            </Viewbox>
+                                                            <TextBlock Text="Vaciar toda la cola" FontSize="12" FontWeight="Medium" Foreground="#FB7185" VerticalAlignment="Center" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                </StackPanel>
+                                            </Border>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <Viewbox Width="13" Height="13" VerticalAlignment="Center">
+                                            <Canvas Width="24" Height="24">
+                                                <Path Classes="stroke-icon" Data="{StaticResource IconTrash}" Stroke="#C185FC" />
+                                            </Canvas>
+                                        </Viewbox>
+                                        <TextBlock Text="Limpiar" FontSize="11.5" Foreground="#D4D4D8" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                            <Canvas Width="24" Height="24">
+                                                <Path Classes="stroke-icon" Data="{StaticResource IconChevronDown}" Stroke="#A1A1AA" />
+                                            </Canvas>
+                                        </Viewbox>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Botón Principal Enviar a Destino -->
+                                <Button Command="{Binding SendBatchCommand}" IsEnabled="{Binding CanSendBatch}"
+                                        Classes="btn-primary-fade"
+                                        Padding="18,8" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <Viewbox Width="13" Height="13" VerticalAlignment="Center">
+                                            <Canvas Width="24" Height="24">
+                                                <Path Classes="stroke-icon" Data="{StaticResource IconSend}" Stroke="#FFFFFF" />
+                                            </Canvas>
+                                        </Viewbox>
+                                        <TextBlock Text="{Binding SendButtonText}" FontSize="12" Foreground="#FFFFFF" FontWeight="Bold" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Cuerpo de Lista o Estado Vacío -->
+                    <Grid Grid.Row="1">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="6" Margin="24"
+                                    IsVisible="{Binding IsQueueEmpty}">
+                            <TextBlock Text="No hay archivos seleccionados en el lote" FontSize="13.5" FontWeight="SemiBold" Foreground="#D4D4D8" HorizontalAlignment="Center" />
+                            <TextBlock Text="Usa '+ Archivos', '+ Carpeta' o arrastra elementos en la franja superior para agregarlos."
+                                       FontSize="11.5" Foreground="#71717A" HorizontalAlignment="Center" />
+                        </StackPanel>
+
+                        <ScrollViewer IsVisible="{Binding HasStagedItems}" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding StagedItems}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Spacing="0" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:StagedTransferItem">
+                                        <Border Background="{Binding RowBg}" BorderBrush="#161822" BorderThickness="0,0,0,1" Padding="18,10">
+                                            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                          MinWidth="0" MinHeight="0" Padding="0" VerticalAlignment="Center" />
+
+                                                <Border Grid.Column="1" Width="34" Height="34" CornerRadius="8"
+                                                        Background="{Binding TileBg}" BorderBrush="{Binding TileBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                                    <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Data="{StaticResource IconFolder}" Fill="{Binding TileIconColor}" Stretch="None" IsVisible="{Binding IsFolderCategory}" />
+                                                            <Path Classes="stroke-icon" Data="{StaticResource IconVideo}" Stroke="{Binding TileIconColor}" IsVisible="{Binding IsVideoCategory}" />
+                                                            <Path Classes="stroke-icon" Data="{StaticResource IconImage}" Stroke="{Binding TileIconColor}" IsVisible="{Binding IsImageCategory}" />
+                                                            <Path Classes="stroke-icon" Data="{StaticResource IconFile}" Stroke="{Binding TileIconColor}" IsVisible="{Binding IsFileCategory}" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </Border>
+
+                                                <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1">
+                                                    <TextBlock Text="{Binding DisplayName}"
+                                                               FontWeight="SemiBold" FontSize="12.5" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding RelativePath}" FontSize="11" Foreground="#71717A" FontFamily="Consolas, monospace" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+
+                                                <Border Grid.Column="3" Background="{Binding StatusBg}" BorderBrush="{Binding StatusBorder}" BorderThickness="1"
+                                                        CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Status}" FontSize="10.5" Foreground="{Binding StatusColor}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                </Border>
+
+                                                <StackPanel Grid.Column="4" MinWidth="68" VerticalAlignment="Center" Spacing="1">
+                                                    <TextBlock Text="{Binding FormattedSize}" FontFamily="Consolas, monospace" FontWeight="SemiBold"
+                                                               FontSize="12" Foreground="#E2E8F0" HorizontalAlignment="Right" />
+                                                    <TextBlock Text="{Binding CategoryLabel}" FontSize="11" Foreground="#71717A" HorizontalAlignment="Right" />
+                                                </StackPanel>
+
+                                                <Button Grid.Column="5"
+                                                        Command="{Binding $parent[UserControl].((vm:SendViewModel)DataContext).RemoveStagedItemCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center" ToolTip.Tip="Quitar archivo">
+                                                    <Viewbox Width="15" Height="15">
+                                                        <Canvas Width="24" Height="24">
+                                                            <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#71717A" />
+                                                        </Canvas>
+                                                    </Viewbox>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ROW 3: PANEL INFERIOR ANCLADO - TRANSFERENCIA EN CURSO -->
+            <Border Grid.Row="3" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="22,14">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="22" VerticalAlignment="Center">
+                    <!-- Dona Circular a la Izquierda -->
+                    <Grid Grid.Column="0" Width="76" Height="76" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Arc StartAngle="0" SweepAngle="360" Width="72" Height="72"
+                             Stroke="#181B22" StrokeThickness="8" />
+                        <Arc StartAngle="-90" SweepAngle="{Binding DonutSweepAngle}" Width="72" Height="72"
+                             Stroke="#7C3AED" StrokeThickness="8" StrokeLineCap="Round" />
+                        <TextBlock Text="{Binding TransferProgressText}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="16.5"
+                                   Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <!-- Centro: Título, Métricas, Barra y Archivo Activo -->
+                    <StackPanel Grid.Column="1" Spacing="7" VerticalAlignment="Center">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Transferencia en curso" FontWeight="Bold" FontSize="13.5" Foreground="#FFFFFF" />
+                            <TextBlock FontFamily="Consolas, monospace" FontSize="11.5" Foreground="#A1A1AA" TextTrimming="CharacterEllipsis">
+                                <Run Text="{Binding TransferredBytesSummary}" />
+                                <Run Text="  •  " Foreground="#52525B" />
+                                <Run Text="{Binding TransferSpeed}" Foreground="#C185FC" FontWeight="SemiBold" />
+                                <Run Text="  •  " Foreground="#52525B" />
+                                <Run Text="{Binding Eta}" />
+                            </TextBlock>
+                        </StackPanel>
+
+                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding TransferProgress}"
+                                     Height="8" CornerRadius="4" Background="#141524" Foreground="#7C3AED" />
+
+                        <!-- Archivo Activo o Mensaje de Estado cuando la cola está vacía -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" IsVisible="{Binding HasStagedItems}">
+                            <Border Width="20" Height="20" CornerRadius="5" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="11" Height="11" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconVideo}" Stroke="#C185FC" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Border>
+                            <TextBlock Text="{Binding CurrentFileName}" FontSize="11.5" FontWeight="Medium" Foreground="#D4D4D8" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                            <TextBlock Text="•" FontSize="11.5" Foreground="#52525B" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding CurrentFileSizeText}" FontSize="11.5" FontFamily="Consolas, monospace" Foreground="#A1A1AA" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding StatusMessage}" FontSize="11.5" Foreground="#71717A" TextTrimming="CharacterEllipsis"
+                                   IsVisible="{Binding IsQueueEmpty}" />
+                    </StackPanel>
+
+                    <!-- Derecha: Estado Arriba + Botones Pausar/Cancelar Abajo -->
+                    <Grid Grid.Column="2" RowDefinitions="Auto,*" RowSpacing="12" VerticalAlignment="Stretch">
+                        <Border Grid.Row="0" Background="{Binding BatchStatusBg}" BorderBrush="{Binding BatchStatusBorder}" BorderThickness="1"
+                                CornerRadius="14" Padding="12,4" HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7" Fill="{Binding BatchStatusColor}" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding BatchStatusText}" FontSize="11.5" Foreground="{Binding BatchStatusColor}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <Button Command="{Binding TogglePauseCommand}" IsEnabled="{Binding IsTransferring}"
+                                    Background="#18191E" BorderBrush="#26283E" BorderThickness="1"
+                                    CornerRadius="10" Padding="12,6" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconPause}" Stroke="#E2E8F0" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="{Binding PauseButtonText}" FontSize="11.5" Foreground="#E2E8F0" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Command="{Binding CancelTransferCommand}"
+                                    Background="#1E1119" BorderBrush="#4C1D2D" BorderThickness="1"
+                                    CornerRadius="10" Padding="12,6" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                        <Canvas Width="24" Height="24">
+                                            <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#F87171" />
+                                        </Canvas>
+                                    </Viewbox>
+                                    <TextBlock Text="Cancelar" FontSize="11.5" Foreground="#FDA4AF" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- MODAL DIALOG: Seleccionar Dispositivo de Destino (SOLO MUESTRA EQUIPOS VINCULADOS) -->
+        <Grid Background="#CC000000" IsVisible="{Binding IsSwitchDeviceDialogOpen}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Border Background="#0E0F12" BorderBrush="#23222B" BorderThickness="1" CornerRadius="16"
+                    Width="500" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    BoxShadow="0 10 30 0 #000000">
+                <StackPanel Spacing="18">
+                    <!-- Modal Header -->
+                    <Border BorderBrush="#181B22" BorderThickness="0,0,0,1" Padding="0,0,0,12">
+                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Seleccionar Dispositivo de Destino" FontSize="15.5" FontWeight="Bold" Foreground="#FFFFFF" />
+                                <TextBlock Text="Solo se muestran equipos previamente vinculados (Zero-Trust)" FontSize="11.5" Foreground="#A1A1AA" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Command="{Binding CloseSwitchDeviceDialogCommand}"
+                                    Background="#18191E" BorderThickness="0" CornerRadius="8" Width="32" Height="32" Padding="0">
+                                <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#A1A1AA" />
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Buscador de Equipos Vinculados -->
+                    <Grid>
+                        <TextBox Text="{Binding SearchQuery}" PlaceholderText="Buscar equipo vinculado por nombre o IP..." Padding="36,8,12,8" FontSize="12" />
+                        <Viewbox Width="15" Height="15" HorizontalAlignment="Left" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="stroke-icon" Data="{StaticResource IconSearch}" Stroke="#71717A" />
+                            </Canvas>
+                        </Viewbox>
+                    </Grid>
+
+                    <!-- Estado vacío si no hay ningún dispositivo vinculado -->
+                    <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="20"
+                            IsVisible="{Binding !FilteredPeers.Count}">
+                        <StackPanel HorizontalAlignment="Center" Spacing="6">
+                            <TextBlock Text="No hay dispositivos vinculados disponibles" FontWeight="SemiBold" FontSize="12.5" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                            <TextBlock Text="Ve a la pestaña 'Dispositivos' y pulsa '+ Vincular nuevo equipo' para emparejar mediante PIN de 6 dígitos."
+                                       FontSize="11" Foreground="#A1A1AA" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="380" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Lista Dinámica de Dispositivos Vinculados -->
+                    <ScrollViewer MaxHeight="260" IsVisible="{Binding !!FilteredPeers.Count}">
+                        <ItemsControl ItemsSource="{Binding FilteredPeers}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Spacing="10" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:PeerDeviceItem">
+                                    <Border Background="#131316" BorderBrush="{Binding CardBorderColor}" BorderThickness="1" CornerRadius="12" Padding="12">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="{Binding IconBg}" BorderBrush="{Binding IconBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                                <Viewbox Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Data="{StaticResource IconWindows}" Fill="{Binding IconFg}" IsVisible="{Binding IsWindows}" />
+                                                        <Path Data="{StaticResource IconLinux}" Fill="{Binding IconFg}" IsVisible="{Binding IsLinux}" />
+                                                        <Path Classes="stroke-icon" Data="{StaticResource IconPhone}" Stroke="{Binding IconFg}" IsVisible="{Binding IsAndroid}" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="13.5" Foreground="#FFFFFF" />
+                                                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                        <Ellipse Width="6" Height="6" Fill="{Binding OnlineStatusColor}" VerticalAlignment="Center" />
+                                                        <TextBlock Text="{Binding OnlineStatusText}" FontSize="10.5" Foreground="{Binding OnlineStatusColor}" FontWeight="Medium" VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding FullSubtitle}" FontSize="11.5" Foreground="#A1A1AA" FontFamily="Consolas, monospace" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Border Background="#1E1738" BorderBrush="#582BF5" BorderThickness="1" CornerRadius="8" Padding="10,4"
+                                                        IsVisible="{Binding IsSelected}">
+                                                    <TextBlock Text="Actual" FontSize="11.5" Foreground="#C185FC" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                                </Border>
+                                                <Button Command="{Binding $parent[UserControl].((vm:SendViewModel)DataContext).SelectPeerAndCloseCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        IsVisible="{Binding IsNotSelected}"
+                                                        Background="#18191E" BorderBrush="#262B36" BorderThickness="1" CornerRadius="8" Padding="12,5">
+                                                    <TextBlock Text="Elegir" FontSize="11.5" Foreground="#F8FAFC" FontWeight="SemiBold" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- Modal Footer -->
+                    <Border BorderBrush="#181B22" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                            <TextBlock Grid.Column="0" Text="{Binding FoundPeersSummary}" FontSize="11.5" Foreground="#A1A1AA" VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Command="{Binding CloseSwitchDeviceDialogCommand}"
+                                    Background="#18191E" BorderBrush="#262B36" BorderThickness="1" CornerRadius="10" Padding="16,7">
+                                <TextBlock Text="Listo" FontSize="11.5" Foreground="#FFFFFF" FontWeight="SemiBold" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

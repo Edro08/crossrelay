@@ -1,0 +1,118 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CrossRelay.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="700"
+             x:Class="CrossRelay.Desktop.Views.HistoryView"
+             x:DataType="vm:HistoryViewModel">
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="16" Margin="24,10,24,14">
+        
+        <!-- Encabezado de la Pantalla Historial -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Text="Historial de Transferencias" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" />
+                <TextBlock Text="Auditoría completa de lotes enviados y recibidos con telemetría"
+                           FontSize="12" Foreground="#A1A1AA" />
+            </StackPanel>
+
+            <!-- Filtros Píldora Conectados + Buscador + Botón Vaciar -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Command="{Binding SetFilterCommand}" CommandParameter="Todos"
+                        Background="{Binding AllBtnBg}" BorderBrush="#262B36" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                    <TextBlock Text="{Binding AllCountLabel}" FontWeight="Bold" FontSize="11.5" Foreground="#FFFFFF" />
+                </Button>
+                <Button Command="{Binding SetFilterCommand}" CommandParameter="Enviados"
+                        Background="{Binding SentBtnBg}" BorderBrush="#262B36" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                    <TextBlock Text="{Binding SentCountLabel}" FontWeight="SemiBold" FontSize="11.5" Foreground="#FFFFFF" />
+                </Button>
+                <Button Command="{Binding SetFilterCommand}" CommandParameter="Recibidos"
+                        Background="{Binding ReceivedBtnBg}" BorderBrush="#262B36" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                    <TextBlock Text="{Binding ReceivedCountLabel}" FontWeight="SemiBold" FontSize="11.5" Foreground="#FFFFFF" />
+                </Button>
+                <TextBox Text="{Binding SearchQuery}"
+                         PlaceholderText="Buscar archivo o equipo..."
+                         Width="200" FontSize="11.5" Padding="10,6" CornerRadius="8" VerticalAlignment="Center" />
+                <Button Command="{Binding ClearHistoryCommand}" Background="#1F1014" BorderBrush="#3F1922" BorderThickness="1"
+                        CornerRadius="8" Padding="10,6" ToolTip.Tip="Limpiar todo el historial">
+                    <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+                        <Canvas Width="24" Height="24">
+                            <Path Classes="stroke-icon" Data="{StaticResource IconTrashSimple}" Stroke="#EF4444" />
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Tarjeta Contenedora Principal Full-Height de Registros de Historial (Superficie Obsidian #0E0F12) -->
+        <Border Grid.Row="1" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="18" VerticalAlignment="Stretch">
+            <Grid>
+                <!-- Estado Vacío cuando no hay registros en el historial -->
+                <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="28"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        IsVisible="{Binding !HasFilteredRecords}">
+                    <StackPanel HorizontalAlignment="Center" Spacing="6">
+                        <Border Width="44" Height="44" CornerRadius="12" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" HorizontalAlignment="Center" Margin="0,0,0,4">
+                            <Viewbox Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconHistory}" Stroke="#C185FC" />
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Text="No hay registros de transferencias" FontWeight="Bold" FontSize="13.5" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                        <TextBlock Text="Los lotes enviados y recibidos con tus dispositivos vinculados se registrarán aquí automáticamente con su velocidad y tamaño."
+                                   FontSize="11" Foreground="#A1A1AA" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="420" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Lista Dinámica Scrolleable de Registros de Historial -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" IsVisible="{Binding HasFilteredRecords}">
+                    <ItemsControl ItemsSource="{Binding FilteredRecords}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="10" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:HistoryRecordItem">
+                                <Border Background="#131316" BorderBrush="#23222B" BorderThickness="1" CornerRadius="12" Padding="16,11">
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+                                        <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10"
+                                                Background="{Binding TileBg}" BorderBrush="{Binding TileBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                            <Viewbox Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Classes="stroke-icon" Data="{StaticResource IconArrowUp}" Stroke="#C185FC" IsVisible="{Binding IsSender}" />
+                                                    <Path Classes="stroke-icon" Data="{StaticResource IconArrowDown}" Stroke="#818CF8" IsVisible="{Binding !IsSender}" />
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                            <TextBlock Text="{Binding TitleWithSize}" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock Text="{Binding DirectionPrefix}" FontSize="11" Foreground="#A1A1AA" />
+                                                <TextBlock Text="{Binding PeerName}" FontSize="11" Foreground="#FFFFFF" FontWeight="Medium" />
+                                                <TextBlock Text="•" FontSize="11" Foreground="#71717A" />
+                                                <TextBlock Text="{Binding FormattedTimestamp}" FontSize="11" Foreground="#71717A" FontFamily="Consolas, monospace" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding SpeedFormatted}" FontFamily="Consolas, monospace" FontWeight="Bold" FontSize="11.5" Foreground="#C185FC" VerticalAlignment="Center" />
+                                        <Border Grid.Column="3" Background="#091914" BorderBrush="#133829" BorderThickness="1" CornerRadius="6" Padding="10,3" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding StatusText}" FontSize="11" Foreground="#10B981" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        </Border>
+                                        <Button Grid.Column="4"
+                                                Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).OpenItemLocationCommand}"
+                                                CommandParameter="{Binding}"
+                                                Background="#18191E" BorderBrush="#262B36" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                                            <TextBlock Text="Abrir" FontSize="11.5" Foreground="#F8FAFC" FontWeight="SemiBold" />
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,245 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CrossRelay.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1050" d:DesignHeight="700"
+             x:Class="CrossRelay.Desktop.Views.ReceiveView"
+             x:DataType="vm:ReceiveViewModel">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="16" Margin="24,10,24,14">
+
+        <!-- 0. Encabezado de la Pantalla Recibir + Píldoras de Estado -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Text="Estación de Escucha (Recibir)" FontSize="20" FontWeight="Bold" Foreground="#FFFFFF" />
+                <TextBlock Text="Recepción directa TLS 1.3 con verificación SHA-256 en tiempo real"
+                           FontSize="12" Foreground="#A1A1AA" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="12" Padding="12,7">
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Fill="#10B981" VerticalAlignment="Center" />
+                        <TextBlock Text="Escuchando" FontSize="11.5" FontWeight="Medium" Foreground="#E2E8F0" VerticalAlignment="Center" />
+                        <TextBlock Text="•" FontSize="11.5" Foreground="#52525B" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding ListenEndpointBadge}" FontSize="11.5" FontFamily="Consolas, monospace" Foreground="#C185FC" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <Border Background="#1E1738" BorderBrush="#332763" BorderThickness="1" CornerRadius="12" Padding="12,7" VerticalAlignment="Center">
+                    <TextBlock Text="Zero-Trust: Solo vinculados" FontSize="11.5" Foreground="#C185FC" FontWeight="Medium" VerticalAlignment="Center" />
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- 1. Barra Compacta de Carpeta Destino y Acción -->
+        <Border Grid.Row="1" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="18,12">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+                <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#1E1738" BorderBrush="#332763" BorderThickness="1">
+                    <Viewbox Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Canvas Width="24" Height="24">
+                            <Path Classes="stroke-icon" Data="{StaticResource IconReceive}" Stroke="#C185FC" />
+                        </Canvas>
+                    </Viewbox>
+                </Border>
+
+                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="Carpeta de recepción predeterminada" FontSize="12.5" FontWeight="SemiBold" Foreground="#FFFFFF" />
+                    <TextBlock Text="{Binding DownloadPath}" FontSize="11" FontFamily="Consolas, monospace" Foreground="#A1A1AA" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <Button Grid.Column="2" Command="{Binding OpenDownloadFolderCommand}" Classes="btn-secondary" Padding="14,7" CornerRadius="10" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+                        <Viewbox Width="13" Height="13" VerticalAlignment="Center">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="stroke-icon" Data="{StaticResource IconFolder}" Stroke="#C185FC" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock Text="Abrir Carpeta" FontSize="11.5" Foreground="#E2E8F0" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- 2. Lista Prioritaria Central: Lote Entrante o Estado de Escucha -->
+        <Border Grid.Row="2" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" ClipToBounds="True">
+            <Grid RowDefinitions="Auto,*">
+                <!-- Cabecera -->
+                <Border Grid.Row="0" Background="#0C0D12" BorderBrush="#181B22" BorderThickness="0,0,0,1" Padding="18,12">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8" Background="#1E1738" BorderBrush="#332763" BorderThickness="1">
+                            <Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconReceive}" Stroke="#C185FC" />
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding QueueHeaderTitle}" FontSize="13.5" FontWeight="Bold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding QueueSubtitle}" FontSize="11" Foreground="#C185FC" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" FontSize="11.5" Foreground="#A1A1AA">
+                                <Run Text="Archivos: " />
+                                <Run Text="{Binding FilesCounterText}" FontFamily="Consolas, monospace" FontWeight="Bold" Foreground="#FFFFFF" />
+                            </TextBlock>
+                            <Border Background="#091914" BorderBrush="#133829" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                                <TextBlock Text="SHA-256 Activo" FontSize="11" FontWeight="Medium" Foreground="#10B981" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Estado Vacío / En Espera -->
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="24"
+                            IsVisible="{Binding IsListeningIdle}">
+                    <Border Width="52" Height="52" CornerRadius="14" Background="#141126" BorderBrush="#271F47" BorderThickness="1" HorizontalAlignment="Center">
+                        <Viewbox Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Canvas Width="24" Height="24">
+                                <Path Classes="stroke-icon" Data="{StaticResource IconReceive}" Stroke="#C185FC" />
+                            </Canvas>
+                        </Viewbox>
+                    </Border>
+                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                        <TextBlock Text="Servidor Activo y Escuchando" FontSize="15" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" />
+                        <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="12" Foreground="#A1A1AA" MaxWidth="440" LineHeight="18">
+                            Listo para recibir archivos por TLS 1.3 en el puerto <Run Text="{Binding ListenPort}" Foreground="#C185FC" FontFamily="Consolas, monospace" /> desde dispositivos vinculados.
+                        </TextBlock>
+                    </StackPanel>
+                    <TextBlock Text="{Binding LastCompletedText}" FontSize="11" FontFamily="Consolas, monospace" Foreground="#71717A" HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Lista Scrolleable de Archivos Entrantes -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" IsVisible="{Binding HasIncomingFiles}">
+                    <ItemsControl ItemsSource="{Binding IncomingFiles}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:IncomingFileItem">
+                                <Border Background="{Binding RowBg}" BorderBrush="#161822" BorderThickness="0,0,0,1" Padding="18,10">
+                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+                                        <!-- Tile por categoría -->
+                                        <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Background="{Binding TileBg}" BorderBrush="{Binding TileBorder}" BorderThickness="1">
+                                            <Panel>
+                                                <Viewbox Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsFolderCategory}">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Data="{StaticResource IconFolder}" Fill="{Binding TileIconColor}" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                                <Viewbox Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsVideoCategory}">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Classes="stroke-icon" Data="{StaticResource IconVideo}" Stroke="{Binding TileIconColor}" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                                <Viewbox Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsImageCategory}">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Classes="stroke-icon" Data="{StaticResource IconImage}" Stroke="{Binding TileIconColor}" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                                <Viewbox Width="15" Height="15" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsFileCategory}">
+                                                    <Canvas Width="24" Height="24">
+                                                        <Path Classes="stroke-icon" Data="{StaticResource IconFile}" Stroke="{Binding TileIconColor}" />
+                                                    </Canvas>
+                                                </Viewbox>
+                                            </Panel>
+                                        </Border>
+
+                                        <!-- Nombre + Ruta relativa -->
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DisplayName}" FontSize="12.5" FontWeight="SemiBold" Foreground="#FFFFFF" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding RelativePath}" FontSize="11" FontFamily="Consolas, monospace" Foreground="#71717A" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+
+                                        <!-- Estado -->
+                                        <Border Grid.Column="2" Background="{Binding StatusBg}" BorderBrush="{Binding StatusBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="SemiBold" Foreground="{Binding StatusColor}" />
+                                        </Border>
+
+                                        <!-- Tamaño + Tipo -->
+                                        <StackPanel Grid.Column="3" MinWidth="74" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding FormattedSize}" FontSize="12" FontWeight="SemiBold" FontFamily="Consolas, monospace" Foreground="#E2E8F0" HorizontalAlignment="Right" />
+                                            <TextBlock Text="{Binding CategoryLabel}" FontSize="10.5" Foreground="#71717A" HorizontalAlignment="Right" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- 3. Panel Inferior Anclado: Recepción en Curso -->
+        <Border Grid.Row="3" Background="#0E0F12" BorderBrush="#181B22" BorderThickness="1" CornerRadius="16" Padding="20,16">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="20" VerticalAlignment="Center">
+
+                <!-- Donut Circular -->
+                <Grid Grid.Column="0" Width="76" Height="76" VerticalAlignment="Center">
+                    <Ellipse Stroke="#181B22" StrokeThickness="8" Fill="Transparent" />
+                    <Arc StartAngle="-90" SweepAngle="{Binding DonutSweepAngle}"
+                         Stroke="#7C3AED" StrokeThickness="8" StrokeLineCap="Round" />
+                    <TextBlock Text="{Binding ActiveProgressPercentText}"
+                               FontSize="16" FontWeight="ExtraBold" FontFamily="Consolas, monospace" Foreground="#FFFFFF"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>
+
+                <!-- Centro: Título, Métricas, Barra y Archivo Activo -->
+                <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="Recepción en curso" FontSize="13.5" FontWeight="Bold" Foreground="#FFFFFF" />
+                        <TextBlock FontSize="11.5" FontFamily="Consolas, monospace" Foreground="#A1A1AA">
+                            <Run Text="{Binding ActiveBytesSummary}" />
+                            <Run Text=" • " Foreground="#52525B" />
+                            <Run Text="{Binding ActiveSpeedText}" Foreground="#C185FC" FontWeight="SemiBold" />
+                            <Run Text=" • " Foreground="#52525B" />
+                            <Run Text="{Binding ActiveEtaText}" />
+                        </TextBlock>
+                    </StackPanel>
+
+                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding ActiveProgressPercent}"
+                                 Height="8" CornerRadius="4" Background="#141524" Foreground="#7C3AED" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Border Width="20" Height="20" CornerRadius="5" Background="#1E1738" BorderBrush="#332763" BorderThickness="1" VerticalAlignment="Center">
+                            <Viewbox Width="11" Height="11" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconReceive}" Stroke="#C185FC" />
+                                </Canvas>
+                            </Viewbox>
+                        </Border>
+                        <TextBlock Text="{Binding CurrentFileName}" FontSize="11.5" FontWeight="Medium" Foreground="#D4D4D8" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        <TextBlock Text="•" FontSize="11.5" Foreground="#52525B" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding CurrentFileSizeText}" FontSize="11.5" FontFamily="Consolas, monospace" Foreground="#A1A1AA" VerticalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Derecha: Estado arriba + Cancelar abajo -->
+                <Grid Grid.Column="2" RowDefinitions="Auto,*" RowSpacing="12" VerticalAlignment="Stretch">
+                    <Border Grid.Row="0" Background="{Binding BatchStatusBg}" BorderBrush="{Binding BatchStatusBorder}" BorderThickness="1"
+                            CornerRadius="14" Padding="12,4" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Ellipse Width="7" Height="7" Fill="{Binding BatchStatusColor}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding BatchStatusText}" FontSize="11.5" Foreground="{Binding BatchStatusColor}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <Button Grid.Row="1" Command="{Binding CancelActiveTransferCommand}" IsVisible="{Binding HasActiveTransfer}"
+                            Background="#1E1119" BorderBrush="#4C1D2D" BorderThickness="1"
+                            CornerRadius="10" Padding="12,6" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                <Canvas Width="24" Height="24">
+                                    <Path Classes="stroke-icon" Data="{StaticResource IconCross}" Stroke="#F87171" />
+                                </Canvas>
+                            </Viewbox>
+                            <TextBlock Text="Cancelar" FontSize="11.5" Foreground="#FDA4AF" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>
